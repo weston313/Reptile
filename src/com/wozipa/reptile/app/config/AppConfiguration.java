@@ -17,7 +17,7 @@ public class AppConfiguration {
 	private static final Log LOG=LogFactory.getLog(AppConfiguration.class);
 	
 	public static final String REP_CONF_PATH="REP_CONF_PATH";
-	private static final String CONF_FILE="replite.xml";
+	private static final String CONF_FILE="reptile.xml";
 	
 	public static final String RESULT_PATH="reptile.result.path";
 	public static final String COOKIE_USERNAME="reptile.cookie.username";
@@ -54,6 +54,16 @@ public class AppConfiguration {
 			return null;
 		}
 		return baseConfiguration.getKey(name);
+	}
+	
+	public void addKey(String name,Key key)
+	{
+		baseConfiguration.addKey(name, key);
+	}
+	
+	public void close()
+	{
+		baseConfiguration.close();
 	}
 	
 }

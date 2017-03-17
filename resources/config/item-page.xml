@@ -228,18 +228,36 @@
 		<value>span</value>
 		<type>tag</type>
 	</property>
-		
-	<property>
-		<name>tmall.desc.url.regex</name>
-		<value><![CDATA[script[src~=(//desc.alicdn.com/)(.*)$]]]>
-		</value>
-		<type>regex</type>
-	</property>
 	
 	<property>
-		<name>tmall.desc.value</name>
-		<value>img</value>
+		<name>tmall.desc.url.container</name>
+		<value>script</value>
 		<type>tag</type>
+	</property>
+	<property>
+		<name>tmall.desc.url.keyword</name>
+		<value>httpsdescurl</value>
+		<type>str</type>
+	</property>
+	<property>
+		<name>tmall.desc.url.split</name>
+		<value>"</value>
+		<type>str</type>
+	</property>
+	<property>
+		<name>tmall.desc.url.domain</name>
+		<value>//desc.alicdn.com/</value>
+		<value>str</value>
+	</property>
+	<property>
+		<name>tmall.desc.split</name>
+		<value>"</value>
+		<type>str</type>
+	</property>
+	<property>
+		<name>tmall.desc.value</name>
+		<value><![CDATA[((http|https)://img.alicdn.com)(.*)$]]></value>
+		<type>regex</type>
 	</property>
 	
 	

@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,12 +26,19 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.CookieManager;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.wozipa.reptile.app.config.Key;
+import com.wozipa.reptile.cookie.CookieManagerCache;
+import com.wozipa.reptile.data.ConnManager;
+import com.wozipa.reptile.data.Connectin;
+import com.wozipa.reptile.data.file.IdFileData;
+import com.wozipa.reptile.id.encrypt.EncryptUtil;
 
 import net.sf.json.JSONObject;
 
@@ -67,9 +76,12 @@ public class TMallPage extends Page{
 	private static final String COLOR_NODE = "tmall.color.node";
 	private static final String COLOR_VALUE = "tmall.color.value";
 	
-	private static final String DESC_CONTAINER="tmall.desc.container";
-	private static final String DESC_NODE="tmall.desc.node";
-	private static final String DESC_VALUE="tmall.desc.value";
+	private static final String DESC_URL_CONTAINER="tmall.desc.url.container";
+	private static final String DESC_URL_KEYWORK="tmall.desc.url.keyword";
+	private static final String DESC_URL_SPLIT="tmall.desc.url.split";
+	private static final String DESC_URL_DOMAIN="tmall.desc.url.domain";
+	private static final String DESC_VALUE_SPLIT="tmall.desc.split";
+	private static final String DESC_VALUE_REGEX="tmall.desc.value";
 	
 	protected Element pageNode;
 	
@@ -82,6 +94,7 @@ public class TMallPage extends Page{
 	private String images;
 	private String date;
 	
+	private int imageCount=0;
 	private String resultPath;
 	private int encrypt;
 	
@@ -98,19 +111,18 @@ public class TMallPage extends Page{
 		this.resultPath=resultPath;
 		this.encrypt=encrypt;
 		//
-		WebClient webClient=new WebClient(BrowserVersion.CHROME);
+		WebClient webClient=new WebClient(BrowserVersion.FIREFOX_38);
 		webClient.getOptions().setJavaScriptEnabled(true);
 		webClient.getOptions().setCssEnabled(false);
-		webClient.getOptions().setTimeout(60*1000);
+		webClient.getOptions().setTimeout(10000);
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
-		//
-		
-		//
+		webClient.getOptions().setRedirectEnabled(true);
+		webClient.getCookieManager().setCookiesEnabled(true);
+		webClient.setCookieManager(CookieManagerCache.getCache().getCookieManager());
 		try {
 			HtmlPage page=webClient.getPage(this.pageUrl);
 			webClient.waitForBackgroundJavaScript(10000);
 			webClient.setJavaScriptTimeout(0);
-			LOG.info(page.asXml());
 			this.pageNode=Jsoup.parse(page.asXml());
 		} catch (FailingHttpStatusCodeException | IOException e1) {
 			// TODO Auto-generated catch block
@@ -121,6 +133,7 @@ public class TMallPage extends Page{
 	@Override
 	public void generateId() {
 		// TODO Auto-generated method stub
+		String idValue=null;
 		if(this.pageUrl==null || pageUrl.isEmpty())
 		{
 			LOG.info("the page url is empty");
@@ -133,9 +146,14 @@ public class TMallPage extends Page{
 		{
 			if(param.contains("id="))
 			{
-				this.id=param.split("=")[1];
+				idValue=param.split("=")[1];
 			}
 		}
+		//
+		this.id=EncryptUtil.encrypt(this.encrypt, idValue);
+		ConnManager connManager=ConnManager.getInstance();
+		Connectin connectin=connManager.getConnection(IdFileData.class);
+		connectin.write(new IdFileData(this.id,idValue));
 	}
 
 	@Override
@@ -227,40 +245,65 @@ public class TMallPage extends Page{
 	 */
 	public void generateDescription()
 	{
-		Key containerKey=configuration.getKey(DESC_CONTAINER);
-		Element containerNode=getElement(this.pageNode,containerKey);
-		if(containerNode==null)
+		Key jsContainerKey=configuration.getKey(DESC_URL_CONTAINER);
+		List<Element> jsElements=getElements(this.pageNode,jsContainerKey);//this.pageNode.getElementsByTag("script");
+		String jsCode=null;
+		Key jsKeywordKey=configuration.getKey(DESC_URL_KEYWORK);
+		for(int i=0;i<jsElements.size();i++)
 		{
-			containerNode=this.pageNode;
+			String html=jsElements.get(i).html();
+			if(html.toLowerCase().contains(jsKeywordKey.getVlaue()))
+			{
+				jsCode=html;
+				break;
+			}
 		}
 		//
-		Key nodeKey=configuration.getKey(DESC_NODE);
-		Element node=getElement(containerNode,nodeKey);
-		if(nodeKey==null)
+		String descUrl=null;
+		Key jsSplitKey=configuration.getKey(DESC_URL_SPLIT);
+		String[] parts=jsCode.split(jsSplitKey.getVlaue());
+		Key urlDomainKey=configuration.getKey(DESC_URL_DOMAIN);
+		for(String part:parts)
 		{
-			node=this.pageNode;
+			if(part.contains(urlDomainKey.getVlaue()))
+			{
+				descUrl=part;
+			}
 		}
-		//
-		Key valueKey=configuration.getKey(DESC_VALUE);
-		List<Element> valuesNode=getElements(node,valueKey);
-		//
-		String thumnStr=configuration.getKey(IMAGES_THUMB).getVlaue();
-		String zoomStr=configuration.getKey(IMAGES_ZOOM).getVlaue();
-		int k=0;
-		for(Element image:valuesNode)
+		System.out.println(descUrl);
+		if(descUrl.startsWith("//"))
 		{
-			String srcUrl=image.attr("src");
-			if(srcUrl.contains(thumnStr))
+			descUrl="https:"+descUrl;
+		}
+		else if(!descUrl.startsWith("https")){
+			descUrl="https://"+descUrl;
+		}
+		try {
+			Response response=Jsoup.connect(descUrl).execute();
+			String body=response.body();
+			Key splitKey=configuration.getKey(DESC_VALUE_SPLIT);
+			Key valueRegexKey=configuration.getKey(DESC_VALUE_REGEX);
+			parts=body.split(splitKey.getVlaue());
+			for(String part:parts)
 			{
-				srcUrl=srcUrl.replaceAll(thumnStr, zoomStr);
+				if(part.matches(valueRegexKey.getVlaue()))
+				{
+					String name=this.id;
+					if(name==null || name.isEmpty())
+					{
+						name="img";
+					}
+					if(this.imageCount>0)
+					{
+						name=name+"_"+this.imageCount;
+					}
+					downloadImage(part,name);
+					this.imageCount++;
+				}
 			}
-			//
-			String name=this.id;
-			if(k>0)
-			{
-				name=name+"_0"+k;
-			}
-			downloadImage(srcUrl, name);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -277,7 +320,13 @@ public class TMallPage extends Page{
 			URL url=new URL(urlStr);
 			HttpURLConnection connection=(HttpURLConnection) url.openConnection();
 			InputStream reader=connection.getInputStream();
-			FileOutputStream writer=new FileOutputStream(new File(this.resultPath+"/"+name));
+			LOG.info(this.resultPath+"\\"+name+".jpg");
+			File image=new File(this.resultPath+"\\"+name+".jpg");
+			if(!image.exists())
+			{
+				image.createNewFile();
+			}
+			FileOutputStream writer=new FileOutputStream(image);
 			byte[] buffer=new byte[4096];
 			int eof=0;
 			while((eof=reader.read(buffer))>=0)
@@ -295,49 +344,6 @@ public class TMallPage extends Page{
 			e.printStackTrace();
 		}
 	}
-	
-//	/**
-//	 * @param containerName
-//	 * @param nodeName
-//	 * @param valueName
-//	 * @return 根据三层关系获取第三层的数据节点
-//	 */
-//	public String generateValue(String containerName,String nodeName,String valueName)
-//	{
-//		Key containerKey=configuration.getKey(containerName);
-//		Element containerNode=getElement(this.pageNode,containerKey);
-//		if(containerNode==null)
-//		{
-//			containerNode=this.pageNode;
-//		}
-//		//
-//		Key nodeKey=configuration.getKey(nodeName);
-//		Element node=getElement(containerNode,nodeKey);
-//		if(nodeKey==null)
-//		{
-//			node=this.pageNode;
-//		}
-//		//
-//		Key valueKey=configuration.getKey(valueName);
-//		List<Element> valuesNode=getElements(node,valueKey);
-//		
-//		System.out.println(valuesNode.size());
-//		StringBuffer sb=new StringBuffer();
-//		for(int i=0;i<valuesNode.size();i++)
-//		{
-//			Element valueNode=valuesNode.get(i);
-//			String value=valueNode.text();
-//			if (value==null || value.isEmpty()) {
-//				value=valueNode.val();
-//			}
-//			sb.append(value);
-//			if(i<valueNode.childNodeSize()-1)
-//			{
-//				sb.append(";");
-//			}
-//		}
-//		return sb.toString();
-//	}
 	
 	/**
 	 * @param parent
@@ -444,14 +450,14 @@ public class TMallPage extends Page{
 	@Override
 	public void startGenerate()
 	{
-//		generateId();
-//		generateTitle();
-//		generateColor();
-//		generateDate();
+		generateId();
+		generateTitle();
+		generateColor();
+		generateDate();
 //		generateImages();
 		generatePrice();
-//		generateSize();
-//		generateDescription();
+		generateSize();
+		generateDescription();
 
 	}
 

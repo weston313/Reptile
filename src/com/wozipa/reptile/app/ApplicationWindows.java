@@ -2,18 +2,26 @@ package com.wozipa.reptile.app;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Listener;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabFolderListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.ListDialog;
 
 import com.wozipa.reptile.app.actions.AboutAction;
 import com.wozipa.reptile.app.actions.ConfigAction;
@@ -23,8 +31,11 @@ import com.wozipa.reptile.app.actions.JobListAction;
 import com.wozipa.reptile.app.actions.NewAction;
 import com.wozipa.reptile.app.actions.SaveAction;
 import com.wozipa.reptile.app.actions.SaveAsAction;
+import com.wozipa.reptile.app.config.AppConfiguration;
 import com.wozipa.reptile.app.config.AppSizeConfig;
+import com.wozipa.reptile.app.dialog.ConfigDialog;
 import com.wozipa.reptile.app.tab.ConfigTabbar;
+import com.wozipa.reptile.cookie.CookieManagerCache;
 
 public class ApplicationWindows extends ApplicationWindow{
 	
@@ -38,7 +49,7 @@ public class ApplicationWindows extends ApplicationWindow{
 	private HelpAction helpAction;
 	private AboutAction aboutAction;
 	private CTabFolder content;
-
+	//
 	public ApplicationWindows() {
 		super(null);
 		app=this;
@@ -54,6 +65,16 @@ public class ApplicationWindows extends ApplicationWindow{
 		this.addMenuBar();
 		this.addToolBar(SWT.FLAT);
 		this.addStatusLine();
+		//init the configuration
+		AppConfiguration configuration=AppConfiguration.getConfiguration();
+		String resultPath=configuration.getKey(AppConfiguration.RESULT_PATH).getVlaue();
+		String username=configuration.getKey(AppConfiguration.COOKIE_USERNAME).getVlaue();
+		String password=configuration.getKey(AppConfiguration.COOKIE_PASSWORD).getVlaue();
+		if(resultPath==null || resultPath.isEmpty() || username==null || username.isEmpty() || password==null || password.isEmpty())
+		{
+			ConfigDialog dialog=new ConfigDialog(this.getShell());
+			dialog.open();
+		}
 	}
 	
 	/**
@@ -124,6 +145,9 @@ public class ApplicationWindows extends ApplicationWindow{
 	@Override
 	protected Control createContents(Composite parent) {
 		// TODO Auto-generated method stub
+		//init 
+		
+		//
 		parent.setBackground(new Color(null, new RGB(255, 255, 255)));
 		content=new CTabFolder(parent,SWT.NONE);
 		content.setBackground(new Color(null, new RGB(255, 255, 255)));
@@ -158,8 +182,6 @@ public class ApplicationWindows extends ApplicationWindow{
 				// TODO Auto-generated method stub
 				if(arg0.item.equals(configAction.getTabbar()))
 				{
-					
-					System.out.println("config close");
 					configAction.setTabbar(null);
 				}
 			}
@@ -173,6 +195,13 @@ public class ApplicationWindows extends ApplicationWindow{
 		windows.setBlockOnOpen(true);
 		windows.open();
 		Display.getCurrent().dispose();
+	}
+	
+	@Override
+	public boolean close() {
+		// TODO Auto-generated method stub
+		AppConfiguration.getConfiguration().close();;
+		return super.close();
 	}
 
 }

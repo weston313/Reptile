@@ -12,9 +12,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.junit.experimental.theories.Theories;
+
+import com.wozipa.reptile.app.config.AppConfiguration;
 
 public class ConfigTabbar extends CTabItem{
 	
@@ -54,12 +57,14 @@ public class ConfigTabbar extends CTabItem{
 	
 	public void createResultArea()
 	{
-		Text label=new Text(composite,SWT.NONE);
+		Label label=new Label(composite, SWT.NONE);
 		label.setText("结果路径");
-		label.setLayoutData(new GridData(SWT.RIGHT,SWT.CENTER, false, false, 1, 1));
+		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
+		label.setBackground(new Color(null, new RGB(255, 255, 255)));
 		//
 		Text resultText=new Text(composite,SWT.BORDER);
 		resultText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER, true, false, 1, 1));
+		resultText.setText(AppConfiguration.getConfiguration().getKey(AppConfiguration.RESULT_PATH).getVlaue());
 		//
 		Button button=new Button(composite, SWT.BUTTON1);
 		button.setText("更换目录");
@@ -68,19 +73,23 @@ public class ConfigTabbar extends CTabItem{
 	
 	private void createCookieArea() {
 		//
-		Text usernameLabel=new Text(composite,SWT.NONE);
-		usernameLabel.setText("淘宝账号");
-		usernameLabel.setLayoutData(new GridData(SWT.LEFT,SWT.CENTER, false, false, 1, 1));
+		Label label=new Label(composite, SWT.NONE);
+		label.setText("淘宝账号");
+		label.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
+		label.setBackground(new Color(null, new RGB(255, 255, 255)));
 		//
 		Text usernameText=new Text(composite,SWT.BORDER);
 		usernameText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER, true, false, 2, 1));
+		usernameText.setText(AppConfiguration.getConfiguration().getKey(AppConfiguration.COOKIE_USERNAME).getVlaue());
 		//
-		Text passwdLabel=new Text(composite,SWT.NONE);
-		passwdLabel.setText("淘宝密码");
-		passwdLabel.setLayoutData(new GridData(SWT.LEFT,SWT.CENTER, false, false, 1, 1));
+		Label label1=new Label(composite, SWT.NONE);
+		label1.setText("淘宝密码");
+		label1.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
+		label1.setBackground(new Color(null, new RGB(255, 255, 255)));
 		//
 		Text passwdText=new Text(composite,SWT.PASSWORD | SWT.BORDER);
 		passwdText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true, false, 2, 1));
+		passwdText.setText(AppConfiguration.getConfiguration().getKey(AppConfiguration.COOKIE_PASSWORD).getVlaue());
 	}
 	
 	

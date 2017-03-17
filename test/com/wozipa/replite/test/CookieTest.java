@@ -39,7 +39,7 @@ public class CookieTest {
 			WebResponse response=page.getElementById("J_SubmitStatic").click().getWebResponse();
 			//
 			HtmlPage tmallPage=webClient.getPage("https://detail.tmall.com/item.htm?spm=a3211.0-7143085.userDefined_1489153322243_11.18.01gUHE&id=545311091867&scene=taobao_shop&gccpm=13090938.600.2.subject-1106&sta=gccpm:13090938.600.2.subject-1106&track_params={%22gccpm%22:%2213090938.600.2.subject-1106%22}&skuId=3453324123795");
-			System.out.println(tmallPage.asXml());
+			
 		} catch (FailingHttpStatusCodeException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

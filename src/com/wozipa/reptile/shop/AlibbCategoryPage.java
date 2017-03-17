@@ -15,6 +15,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.wozipa.reptile.app.config.Key;
+import com.wozipa.reptile.cookie.CookieManagerCache;
 
 public class AlibbCategoryPage extends CategoryPage{
 	
@@ -71,8 +72,12 @@ public class AlibbCategoryPage extends CategoryPage{
 			webClient.getOptions().setRedirectEnabled(false);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			webClient.getOptions().setTimeout(20000);
-			webClient.waitForBackgroundJavaScript(20000);
+			webClient.getCookieManager().setCookiesEnabled(true);
+			webClient.setCookieManager(CookieManagerCache.getCache().getCookieManager());
+			
 			HtmlPage page=webClient.getPage(url);
+			webClient.waitForBackgroundJavaScript(20000);
+			webClient.setJavaScriptTimeout(0);
 			System.out.println(page.asXml());
 			//
 			pageNode=Jsoup.parse(page.asXml());

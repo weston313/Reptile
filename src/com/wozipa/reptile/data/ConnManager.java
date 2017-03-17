@@ -13,21 +13,29 @@ public class ConnManager {
 	
 	public static final Log LOG=LogFactory.getLog(ConnManager.class);
 	
-	private Map<Class<? extends Data>,Connectin<Data>> connPool=null;
-	private static ConnManager manager=null;
 	
-	private ConnManager()
-	{
-		this.connPool=new HashMap<>();
-	}
+	private static ConnManager manager=null;
 	
 	public static ConnManager getInstance()
 	{
 		if(manager==null)
 		{
-			manager=new ConnManager();
+			synchronized (ConnManager.class) {
+				if(manager==null)
+				{
+					manager=new ConnManager();
+				}
+			}
 		}
 		return manager;
+	}
+	
+	private Map<Class<? extends Data>,Connectin<Data>> connPool=null;
+	
+	private ConnManager()
+	{
+		this.connPool=new HashMap<>();
+		this.connPool.put(IdFileData.class,new FileConnection<>(IdFileData.FILE_PATH, IdFileData.class));
 	}
 	
 	public Connectin<Data> getConnection(Class<? extends Data> cls)

@@ -1,6 +1,7 @@
 package com.wozipa.reptile.item;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Date;
 
 import javax.swing.text.StyleConstants.ColorConstants;
@@ -11,7 +12,16 @@ import org.jsoup.Connection;
 import org.jsoup.Connection.Response;
 import org.jsoup.nodes.Element;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.ibm.icu.text.SimpleDateFormat;
+import com.wozipa.reptile.cookie.CookieManagerCache;
+import com.wozipa.reptile.data.ConnManager;
+import com.wozipa.reptile.data.Connectin;
+import com.wozipa.reptile.data.file.IdFileData;
+import com.wozipa.reptile.id.encrypt.EncryptUtil;
 
 import org.jsoup.Jsoup;
 
@@ -56,25 +66,6 @@ public class ALiPage extends Page{
 	private String resultPath;
 	private int encrypt;
 	
-//	public ALiPage(String pageUrl,String resultPath) {
-//		// TODO Auto-generated constructor stub
-//		this.pageUrl=pageUrl;
-//		this.resultPath=resultPath;
-//		Connection connection=Jsoup.connect(this.pageUrl);
-//		try {
-//			Response response=connection.execute();
-//			if(response==null || response.statusCode()!=200)
-//			{
-//				LOG.info("cannot open the page url "+pageUrl);
-//				return;
-//			}
-//			this.pageNode=response.parse();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-	
 	public ALiPage() {
 		// TODO Auto-generated constructor stub
 	}
@@ -89,18 +80,34 @@ public class ALiPage extends Page{
 		this.pageUrl=pageUrl;
 		this.resultPath=resultPath;
 		this.encrypt=encrypt;
-		Connection connection=Jsoup.connect(this.pageUrl);
+		//
+		WebClient webClient=new WebClient(BrowserVersion.FIREFOX_38);
+		webClient.getOptions().setJavaScriptEnabled(true);
+		webClient.getOptions().setCssEnabled(false);
+		webClient.getOptions().setThrowExceptionOnScriptError(false);
+		webClient.getOptions().setTimeout(10000);
+		//
+		webClient.getCookieManager().setCookiesEnabled(true);
+		webClient.setCookieManager(CookieManagerCache.getCache().getCookieManager());
 		try {
-			Response response=connection.execute();
-			if(response==null || response.statusCode()!=200)
-			{
-				LOG.info("cannot open the page url "+pageUrl);
-				return;
+			HtmlPage page=webClient.getPage(this.pageUrl);
+			webClient.waitForBackgroundJavaScript(10000);
+			webClient.setJavaScriptTimeout(0);
+			String pageXml=page.asXml();
+			//
+			this.pageNode=Jsoup.parse(pageXml);
+			if(this.pageNode==null){
+				LOG.info("the taobao page node is null");
 			}
-			this.pageNode=response.parse();
-		} catch (IOException e) {
+		} catch (FailingHttpStatusCodeException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
 
@@ -109,6 +116,7 @@ public class ALiPage extends Page{
 	@Override
 	public void generateId() {
 		// TODO Auto-generated method stub
+		String idValue=null;
 		if(this.pageUrl==null || pageUrl.isEmpty())
 		{
 			LOG.info("the page url is empty");
@@ -124,6 +132,11 @@ public class ALiPage extends Page{
 				this.id=param.split("=")[1];
 			}
 		}
+		//
+		this.id=EncryptUtil.encrypt(this.encrypt, idValue);
+		ConnManager connManager=ConnManager.getInstance();
+		Connectin connectin=connManager.getConnection(IdFileData.class);
+		connectin.write(new IdFileData(this.id,idValue));
 	}
 
 	@Override

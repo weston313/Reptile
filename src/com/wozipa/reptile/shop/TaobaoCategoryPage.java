@@ -23,6 +23,7 @@ import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.wozipa.reptile.app.config.Key;
+import com.wozipa.reptile.cookie.CookieManagerCache;
 
 public class TaobaoCategoryPage extends CategoryPage{
 	
@@ -67,12 +68,14 @@ public class TaobaoCategoryPage extends CategoryPage{
 		webClient.getOptions().setTimeout(30000);
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
 		webClient.getOptions().setRedirectEnabled(true);
-		webClient.setAjaxController(new NicelyResynchronizingAjaxController()); 
-		test=webClient.waitForBackgroundJavaScript(10000);
+		webClient.getCookieManager().setCookiesEnabled(true);
+		webClient.setCookieManager(CookieManagerCache.getCache().getCookieManager());
+		
 		//开始进行抓取
 		try {
 			HtmlPage page=webClient.getPage(this.pageUrl);
-			
+			webClient.waitForBackgroundJavaScript(10000);
+			webClient.setJavaScriptTimeout(0);
 			String pageXml=page.asXml();
 			//
 			this.pageNode=Jsoup.parse(pageXml);

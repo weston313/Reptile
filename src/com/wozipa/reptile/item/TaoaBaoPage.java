@@ -27,6 +27,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.wozipa.reptile.app.config.Key;
+import com.wozipa.reptile.cookie.CookieManagerCache;
 import com.wozipa.reptile.data.ConnManager;
 import com.wozipa.reptile.data.Connectin;
 import com.wozipa.reptile.data.file.IdFileData;
@@ -112,6 +113,7 @@ public class TaoaBaoPage extends Page{
 		webClient.getOptions().setTimeout(10000);
 		//
 		webClient.getCookieManager().setCookiesEnabled(true);
+		webClient.setCookieManager(CookieManagerCache.getCache().getCookieManager());
 		try {
 			HtmlPage page=webClient.getPage(this.pageUrl);
 			webClient.waitForBackgroundJavaScript(10000);
@@ -269,7 +271,11 @@ public class TaoaBaoPage extends Page{
 			InputStream reader=connection.getInputStream();
 			LOG.info(this.resultPath+"/"+name);
 			File image=new File(this.resultPath+"\\"+name+".jpg");
-			image.createNewFile();
+			if(!image.exists())
+			{
+				image.createNewFile();
+			}
+			
 			FileOutputStream writer=new FileOutputStream(image);
 			byte[] buffer=new byte[4096];
 			int eof=0;

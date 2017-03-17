@@ -17,6 +17,7 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.wozipa.reptile.app.config.Key;
+import com.wozipa.reptile.cookie.CookieManagerCache;
 
 public class TMallCategoryPage extends CategoryPage{
 	
@@ -52,9 +53,13 @@ public class TMallCategoryPage extends CategoryPage{
 		webClient.getOptions().setTimeout(20000);
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
 		webClient.getOptions().setRedirectEnabled(true);
-		webClient.waitForBackgroundJavaScript(10000);
+		webClient.getCookieManager().setCookiesEnabled(true);
+		webClient.setCookieManager(CookieManagerCache.getCache().getCookieManager());
+		
 		try {
 			HtmlPage page=webClient.getPage(this.pageUrl);
+			webClient.waitForBackgroundJavaScript(10000);
+			webClient.setJavaScriptTimeout(0);
 			String pageXml=page.asXml();
 			this.pageNode=Jsoup.parse(pageXml);
 			LOG.info(pageNode.outerHtml());
