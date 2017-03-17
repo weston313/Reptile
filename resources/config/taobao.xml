@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property>
+		<name>taobao.images.container</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>taobao.images.node</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>taobao.images.value</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>taobao.title.container</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>taobao.title.node</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>taobao.title.value</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>taobao.price.container</name>
+		<value></value>
+	</property>
+	<property>
+		<name>taobao.price.node</name>
+		<value></value>
+	</property>
+	<property>
+		<name>taobao.price.value</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>taobao.size.container</name>
+		<value></value>
+	</property>
+	<property>
+		<name>taobao.price.node</name>
+		<value></value>
+	</property>
+	<property>
+		<name>taobao.price.value</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>taobao.color.container</name>
+		<value></value>
+	</property>
+	<property>
+		<name>taobao.color.node</name>
+		<value></value>
+	</property>
+	<property>
+		<name>taobao.color.value</name>
+		<value></value>
+	</property>
+</configuration>

@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<!-- 淘宝页面的获取信息 -->
+	<property>
+		<name>taobao.images.container</name>
+		<value>detail</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>taobao.images.node</name>
+		<value>J_UlThumb</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>taobao.images.value</name>
+		<value>img</value>
+		<type>tag</type>
+	</property>
+	<property>
+		<name>taobao.images.thumb</name>
+		<value>50x50</value>
+		<type></type>
+	</property>
+	<property>
+		<name>taobao.images.zoom</name>
+		<value>400x400</value>
+		<type></type>
+	</property>
+	<property>
+		<name>taobao.title.container</name>
+		<value>detail</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>taobao.title.node</name>
+		<value>J_Title</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>taobao.title.value</name>
+		<value>tb-main-title</value>
+		<type>class</type>
+	</property>
+	
+	<property>
+		<name>taobao.price.container</name>
+		<value>J_StrPriceModBox</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>taobao.price.node</name>
+		<value>J_StrPrice</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>taobao.price.value</name>
+		<value>tb-rmb-num</value>
+		<type>class</type>
+	</property>
+	
+	<property>
+		<name>taobao.promo.container</name>
+		<value>J_PromoPriceNum</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>taobao.promo.node</name>
+		<value>#tb-promo-item-bd</value>
+		<type>class</type>
+	</property>
+	<property>
+		<name>taobao.promo.value</name>
+		<value>J_PromoPriceNum</value>
+		<type>id</type>
+	</property>
+	
+	<property>
+		<name>taobao.size.container</name>
+		<value>J_isku</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>taobao.size.node</name>
+		<value>J_TMySizeProp</value>
+		<type>class</type>
+	</property>
+	<property>
+		<name>taobao.size.value</name>
+		<value>span</value>
+		<type>tag</type>
+	</property>
+	
+	<property>
+		<name>taobao.color.container</name>
+		<value>J_isku</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>taobao.color.node</name>
+		<value>J_Prop_Color</value>
+		<type>class</type>
+	</property>
+	<property>
+		<name>taobao.color.value</name>
+		<value>span</value>
+		<type>tag</type>
+	</property>
+		
+	<property>
+		<name>taobao.desc.url.regex</name>
+		<value><![CDATA[script[src~=(//desc.alicdn.com/)(.*)$]]]>
+		</value>
+		<type>regex</type>
+	</property>
+	
+	<property>
+		<name>taobao.desc.value</name>
+		<value>img</value>
+		<type>tag</type>
+	</property>
+	
+	
+	<!-- 天猫页面的信息抓取  -->
+	<property>
+		<name>tmall.images.container</name>
+		<value>detail</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>tmall.images.node</name>
+		<value>J_UlThumb</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>tmall.images.value</name>
+		<value>img</value>
+		<type>tag</type>
+	</property>
+	<property>
+		<name>tmall.images.thumb</name>
+		<value>50x50</value>
+		<type></type>
+	</property>
+	<property>
+		<name>tmall.images.zoom</name>
+		<value>400x400</value>
+		<type></type>
+	</property>
+	
+	
+	<property>
+		<name>tmall.title.container</name>
+		<value>J_DetailMeta</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>tmall.title.node</name>
+		<value>tb-detail-hd</value>
+		<type>class</type>
+	</property>
+	<property>
+		<name>tmall.title.value</name>
+		<value>h1</value>
+		<type>tag</type>
+	</property>
+	
+	<property>
+		<name>tmall.price.container</name>
+		<value>J_StrPriceModBox</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>tmall.price.node</name>
+		<value>dd</value>
+		<type>tag</type>
+	</property>
+	<property>
+		<name>tmall.price.value</name>
+		<value>tm-price</value>
+		<type>class</type>
+	</property>
+	
+	<property>
+		<name>tmall.promo.container</name>
+		<value>J_PromoPrice</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>tmall.promo.node</name>
+		<value>tm-promo-price</value>
+		<type>class</type>
+	</property>
+	<property>
+		<name>tmall.promo.value</name>
+		<value>tm-price</value>
+		<type>class</type>
+	</property>
+	
+	<property>
+		<name>tmall.size.container</name>
+		<value>tm-price</value>
+		<type>class</type>
+	</property>
+	<property>
+		<name>tmall.size.node</name>
+		<value>J_TMySizeProp</value>
+		<type>class</type>
+	</property>
+	<property>
+		<name>tmall.size.value</name>
+		<value>span</value>
+		<type>tag</type>
+	</property>
+	
+	<property>
+		<name>tmall.color.container</name>
+		<value>J_DetailMeta</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>tmall.color.node</name>
+		<value>J_TSaleProp</value>
+		<type>class</type>
+	</property>
+	<property>
+		<name>tmall.color.value</name>
+		<value>span</value>
+		<type>tag</type>
+	</property>
+		
+	<property>
+		<name>tmall.desc.url.regex</name>
+		<value><![CDATA[script[src~=(//desc.alicdn.com/)(.*)$]]]>
+		</value>
+		<type>regex</type>
+	</property>
+	
+	<property>
+		<name>tmall.desc.value</name>
+		<value>img</value>
+		<type>tag</type>
+	</property>
+	
+	
+</configuration>

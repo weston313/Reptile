@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property>
+		<name>tmall.images.container</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>tmall.images.node</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>tmall.images.value</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>tmall.title.container</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>tmall.title.node</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>tmall.title.value</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>tmall.price.container</name>
+		<value></value>
+	</property>
+	<property>
+		<name>tmall.price.node</name>
+		<value></value>
+	</property>
+	<property>
+		<name>tmall.price.value</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>tmall.size.container</name>
+		<value></value>
+	</property>
+	<property>
+		<name>tmall.price.node</name>
+		<value></value>
+	</property>
+	<property>
+		<name>tmall.price.value</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>tmall.color.container</name>
+		<value></value>
+	</property>
+	<property>
+		<name>tmall.color.node</name>
+		<value></value>
+	</property>
+	<property>
+		<name>tmall.color.value</name>
+		<value></value>
+	</property>
+</configuration>
