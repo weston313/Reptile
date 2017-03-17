@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuraion>
+	<property>
+		<name>reptile.result.path</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>reptile.cookie.username</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name>reptile.cookie.password</name>
+		<value></value>
+	</property>
+	
+	<property>
+		<name></name>
+		<value></value>
+	</property>
+</configuraion>

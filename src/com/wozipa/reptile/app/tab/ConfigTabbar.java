@@ -82,4 +82,6 @@ public class ConfigTabbar extends CTabItem{
 		Text passwdText=new Text(composite,SWT.PASSWORD | SWT.BORDER);
 		passwdText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true, false, 2, 1));
 	}
+	
+	
 }

@@ -19,27 +19,41 @@ public class AppConfiguration {
 	public static final String REP_CONF_PATH="REP_CONF_PATH";
 	private static final String CONF_FILE="replite.xml";
 	
-	public static final String KEY_DOWNLOAD_PATH="replite.download.path";
+	public static final String RESULT_PATH="reptile.result.path";
+	public static final String COOKIE_USERNAME="reptile.cookie.username";
+	public static final String COOKIE_PASSWORD="reptile.cookie.password";
 	
-	private static final Map<String, String> APP_CONF=new HashMap<>();
+	private volatile static AppConfiguration configuration=null;
 	
-	static{
-		String confDir=System.getProperty(REP_CONF_PATH);
-		try {
-			Document document=new SAXReader().read(new File(confDir)+"/"+CONF_FILE);
-			Element root=document.getRootElement();
-			List<Element> list=root.elements("property");
-			for(Element property:list)
+	public static AppConfiguration getConfiguration()
+	{
+		if(configuration==null)
+		{
+			synchronized(BaseConfiguration.class)
 			{
-				String name=property.elementText("name");
-				String value=property.elementText("value");
-				APP_CONF.put(name, value);
+				if(configuration==null){
+					configuration=new AppConfiguration();
+				}
 			}
-		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		return configuration;
 	}
 	
+	private BaseConfiguration baseConfiguration=null;
+	
+	private AppConfiguration()
+	{
+		baseConfiguration=new BaseConfiguration(CONF_FILE);
+	}
+	
+	public Key getKey(String name)
+	{
+		if(name==null || name.isEmpty())
+		{
+			LOG.info("the name is null");
+			return null;
+		}
+		return baseConfiguration.getKey(name);
+	}
 	
 }
