@@ -3,6 +3,9 @@ package com.wozipa.replite.test;
 import java.io.IOException;
 import java.util.Set;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -38,8 +41,10 @@ public class CookieTest {
 			page.getElementById("TPL_password_1").setNodeValue("Wozipa@313#tb");
 			WebResponse response=page.getElementById("J_SubmitStatic").click().getWebResponse();
 			//
-			HtmlPage tmallPage=webClient.getPage("https://detail.tmall.com/item.htm?spm=a3211.0-7143085.userDefined_1489153322243_11.18.01gUHE&id=545311091867&scene=taobao_shop&gccpm=13090938.600.2.subject-1106&sta=gccpm:13090938.600.2.subject-1106&track_params={%22gccpm%22:%2213090938.600.2.subject-1106%22}&skuId=3453324123795");
-			
+			HtmlPage tmallPage=webClient.getPage("https://detail.tmall.com/item.htm?spm=a220m.1000858.1000725.16.LGlnqu&id=42172636647&skuId=86924828463&areaId=110100&user_id=2271751309&cat_id=2&is_b=1&rn=2d64f2b937d94e14578888ec78fe5648");
+			Element pageNode=Jsoup.parse(tmallPage.asXml());
+			Elements elemenets=pageNode.select("ul[class=tm-clear J_TSaleProp]");
+			System.out.println(elemenets.size());
 		} catch (FailingHttpStatusCodeException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

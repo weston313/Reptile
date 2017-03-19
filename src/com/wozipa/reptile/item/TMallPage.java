@@ -46,6 +46,9 @@ public class TMallPage extends Page{
 	
 	private static final Log LOG=LogFactory.getLog(TMallPage.class);
 	
+	//商品ID
+	private static final String ID_REGEX="tmall.id.regex";
+	
 	// 商品照片
 	private static final String IMAGES_CONTAINER = "tmall.images.container";
 	private static final String IMAGES_NODE = "tmall.images.node";
@@ -69,8 +72,8 @@ public class TMallPage extends Page{
 
 	// 获取商品大小值需要使用的变量
 	private static final String SIZE_CONTAINER = "tmall.size.container";
-	private static final String SIZE_NODE = "tmall.price.node";
-	private static final String SIZE_VALUE = "tmall.price.value";
+	private static final String SIZE_NODE = "tmall.size.node";
+	private static final String SIZE_VALUE = "tmall.size.value";
 
 	private static final String COLOR_CONTAINER = "tmall.color.container";
 	private static final String COLOR_NODE = "tmall.color.node";
@@ -143,7 +146,7 @@ public class TMallPage extends Page{
 		String[] params=paramLine.split("&");
 		for(String param:params)
 		{
-			if(param.contains("id="))
+			if(param.startsWith("id="))
 			{
 				idValue=param.split("=")[1];
 			}
@@ -166,6 +169,8 @@ public class TMallPage extends Page{
 	@Override
 	public void generateSize() {
 		// TODO Auto-generated method stub
+		LOG.info("start to generate size");
+		LOG.info(this.pageNode.outerHtml());
 		String sizeValue=generateValue(this.pageNode,SIZE_CONTAINER, SIZE_NODE, SIZE_VALUE);
 		this.size=sizeValue;
 	}
@@ -341,93 +346,6 @@ public class TMallPage extends Page{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * @param parent
-	 * @param key
-	 * @return 获取element列表
-	 * @see 获取一个列表
-	 */
-	public List<Element> getElements(Element parent,Key key)
-	{
-		List<Element> nodes=new ArrayList<>();
-		if(parent==null)
-		{
-			LOG.info("the parent node is null");
-			return null;
-		}
-		if(key==null)
-		{
-			LOG.info("the key object is null");
-			return null;
-		}
-		Element node=null;
-		String type=key.getType();
-		if(type.toLowerCase().equals("id"))
-		{
-			node=parent.getElementById(key.getVlaue());
-			nodes.add(node);
-		}
-		else if(type.toLowerCase().equals("class"))
-		{
-			Elements elements=parent.getElementsByClass(key.getVlaue());
-			if(elements!=null && !elements.isEmpty())
-			{
-				for(int i=0;i<elements.size();i++)
-				{
-					nodes.add(elements.get(i));
-				}
-			}
-			
-		}
-		else
-		{
-			Elements elements=parent.getElementsByTag(key.getVlaue());
-			if(elements!=null && !elements.isEmpty())
-			{
-				for(int i=0;i<elements.size();i++)
-				{
-					nodes.add(elements.get(i));
-				}
-			}
-		}
-		return nodes;
-	}
-	
-	/**
-	 * @param parent
-	 * @param key
-	 * @return 获取指定的element
-	 * @see 获取指定的element节点
-	 */
-	public Element getElement(Element parent,Key key)
-	{
-		if(parent==null)
-		{
-			LOG.info("the parent node is null");
-			return null;
-		}
-		if(key==null)
-		{
-			LOG.info("the key object is null");
-			return null;
-		}
-		Element node=null;
-		String type=key.getType();
-		if(type.toLowerCase().equals("id"))
-		{
-			node=parent.getElementById(key.getVlaue());
-		}
-		else if(type.toLowerCase().equals("class"))
-		{
-			node=parent.getElementsByClass(key.getVlaue()).first();
-		}
-		else
-		{
-			node=parent.getElementsByTag(key.getVlaue()).first();
-		}
-		return node;
 	}
 	
 	public String toJson()

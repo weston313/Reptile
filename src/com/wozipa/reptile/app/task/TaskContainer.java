@@ -29,11 +29,6 @@ public class TaskContainer {
 				if(container==null)
 				{
 					container=new TaskContainer();
-					TaskInfo taskInfo=new TaskInfo();
-					taskInfo.setPregress(0);
-					taskInfo.setTaskInfo("test","/test");
-					taskInfo.setState(STATE.RUNNING);
-					container.addTask("test", taskInfo);
 				}
 			}
 		}

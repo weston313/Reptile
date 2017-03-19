@@ -1,6 +1,9 @@
 package com.wozipa.reptile.item;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +17,7 @@ import org.dom4j.io.SAXReader;
 
 import com.wozipa.reptile.app.config.AppConfiguration;
 import com.wozipa.reptile.app.config.Key;
+import com.wozipa.reptile.util.ReptileUtils;
 
 public class PageConfiguration {
 	
@@ -23,28 +27,38 @@ public class PageConfiguration {
 	private static final String CONFIG_FILE="item-page.xml";
 	
 	static{
-		String confPath=System.getProperty(AppConfiguration.REP_CONF_PATH);
+		String confPath=ReptileUtils.GetConfPath();
 		if(confPath==null || confPath.isEmpty())
 		{
-			confPath=PageConfiguration.class.getResource("/config").getFile().toString();
+			LOG.info("not set REPTILE_CONF property");
 		}
-		try {
-			Document document=new SAXReader().read(new File(confPath+"/"+CONFIG_FILE));
-			Element root=document.getRootElement();
-			List<Element> properties=root.elements("property");
-			for(Element property:properties)
+		else
+		{
+			File itemFile=new File(confPath+"/"+CONFIG_FILE);
+			if(itemFile.exists())
 			{
-				String name=property.elementText("name");
-				String value=property.elementText("value");
-				String type=property.elementText("type");
-				LOG.info("load configuration "+name+" "+value+" "+type);
-				CONTAINER.put(name,new Key(value, type));
+				try {
+					Document document=new SAXReader().read(new BufferedInputStream(new FileInputStream(itemFile)));
+					Element root=document.getRootElement();
+					List<Element> properties=root.elements("property");
+					for(Element property:properties)
+					{
+						String name=property.elementText("name");
+						String value=property.elementText("value");
+						String type=property.elementText("type");
+						LOG.info("load configuration "+name+" "+value+" "+type);
+						CONTAINER.put(name,new Key(value, type));
+					}
+				} catch (DocumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
 		}
-		
 	}
 	
 	private volatile static PageConfiguration configuration=null;

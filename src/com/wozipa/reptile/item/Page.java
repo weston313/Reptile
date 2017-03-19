@@ -12,8 +12,8 @@ import com.wozipa.reptile.app.config.Key;
 public abstract class Page {
 	
 	private static final Log LOG=LogFactory.getLog(Page.class);
-	protected PageConfiguration configuration;
 	
+	protected PageConfiguration configuration;
 	
 	public abstract void generateId();
 	
@@ -67,6 +67,7 @@ public abstract class Page {
 		if(containerNode==null)
 		{
 			LOG.info("the container node is null");
+			LOG.info("key is "+containerKey.getVlaue()+" and "+containerKey.getType());
 			containerNode=pageNode;
 		}
 		//
@@ -183,16 +184,17 @@ public abstract class Page {
 	{
 		if(parent==null)
 		{
-			LOG.info("the parent node is null");
+			System.out.println("the parent node is null");
 			return null;
 		}
 		if(key==null)
 		{
-			LOG.info("the key object is null");
+			System.out.println("the key object is null");
 			return null;
 		}
 		Element node=null;
 		String type=key.getType();
+		System.out.println("the type is "+type);
 		if(type.toLowerCase().equals("id"))
 		{
 			node=parent.getElementById(key.getVlaue());
@@ -207,8 +209,11 @@ public abstract class Page {
 		}
 		else if(type.toLowerCase().equals("regex"))
 		{
+			System.out.println("hehehehehe");
+			System.out.println(key.getVlaue());
 			node=parent.select(key.getVlaue()).first();
 		}
+		System.out.println("hahahaha");
 		return node;
 	}
 	

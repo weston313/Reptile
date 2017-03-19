@@ -14,24 +14,20 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.Connection;
-import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.wozipa.reptile.app.config.Key;
 import com.wozipa.reptile.cookie.CookieManagerCache;
 import com.wozipa.reptile.data.ConnManager;
 import com.wozipa.reptile.data.Connectin;
 import com.wozipa.reptile.data.file.IdFileData;
-import com.wozipa.reptile.id.encrypt.Encrypt;
 import com.wozipa.reptile.id.encrypt.EncryptUtil;
 
 import net.sf.json.JSONObject;
@@ -152,7 +148,7 @@ public class TaoaBaoPage extends Page{
 		String[] params=paramLine.split("&");
 		for(String param:params)
 		{
-			if(param.contains("id="))
+			if(param.startsWith("id="))
 			{
 				idValue=param.split("=")[1];
 			}
@@ -323,7 +319,11 @@ public class TaoaBaoPage extends Page{
 				System.out.println(imgs.attr("src"));
 				Element img=imgs.get(i);
 				String imgUrl=img.attr("src");
-				String name="image";
+				String name=this.id;
+				if(name==null || name.isEmpty())
+				{
+					name="image";
+				}
 				if(this.imageCount>0)
 				{
 					name=name+"_0"+this.imageCount;
@@ -347,8 +347,8 @@ public class TaoaBaoPage extends Page{
 		generateDate();
 		generatePrice();
 		generateSize();
-		generateImages();
-//		generateDescription();
+//		generateImages();
+		generateDescription();
 		System.out.println(this.toJSON());
 	}
 	

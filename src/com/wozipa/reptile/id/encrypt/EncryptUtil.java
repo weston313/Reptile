@@ -76,9 +76,9 @@ public class EncryptUtil {
 	public static String invertEncrypt(String id)
 	{
 		StringBuffer sb=new StringBuffer();
-		for(int i=0;i<id.length();i++)
+		for(int i=id.length()-1;i>=0;i--)
 		{
-			sb.append(id.indexOf(i));
+			sb.append(id.charAt(i));
 		}
 		return sb.toString();
 	}

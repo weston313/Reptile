@@ -13,7 +13,7 @@ public class IdFileData extends Data{
 	
 	private static final Log LOG=LogFactory.getLog(IdFileData.class);
 	
-	public static final String FILE_PATH="/data/id.xml";
+	public static final String FILE_NAME="id.xml";
 	
 	public IdFileData(){}
 	

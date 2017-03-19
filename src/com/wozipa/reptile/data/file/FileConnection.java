@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -21,9 +20,9 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
-
 import com.wozipa.reptile.data.Connectin;
 import com.wozipa.reptile.data.Data;
+import com.wozipa.reptile.util.ReptileUtils;
 
 public class FileConnection<T extends Data> extends Connectin{
 	
@@ -32,13 +31,13 @@ public class FileConnection<T extends Data> extends Connectin{
 	private static final String ROOT_QNAME="data";
 	private static final String ROW_QNAME="row";
 	
-	private String filePath;
+	private String fileName;
 	private Class<T> cls;
 	private Map<String,Data> container;
 	private Map<String, Data> newData;
 	
-	public FileConnection(String path,Class<T> cls){
-		this.filePath=path;
+	public FileConnection(String name,Class<T> cls){
+		this.fileName=name;
 		this.cls=cls;
 		this.container=new HashMap<>();
 		this.newData=new HashMap<>();
@@ -50,8 +49,18 @@ public class FileConnection<T extends Data> extends Connectin{
 	{
 		FileInputStream reader;
 		try {
-			//LOG.info("the path is "+FileConnection.class.getResource("/data/id.xml").getPath());
-			InputStream fileInputStream=FileConnection.class.getResourceAsStream(this.filePath);
+			String reptileDataPath=ReptileUtils.GetDataPath();
+			if(reptileDataPath==null || reptileDataPath.isEmpty())
+			{
+				LOG.info("not set the REPTILE_DATA property");
+				return;
+			}
+			File dataFile=new File(reptileDataPath+"/"+this.fileName);
+			if(!dataFile.exists())
+			{
+				dataFile.createNewFile();
+			}
+			InputStream fileInputStream=new FileInputStream(dataFile);
 			Document document=new SAXReader().read(fileInputStream);
 			Element root=document.getRootElement();
 			List<Element> rows=root.elements(ROW_QNAME);
@@ -96,6 +105,12 @@ public class FileConnection<T extends Data> extends Connectin{
 		} catch (NoSuchMethodException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} 
 		
 	}
@@ -138,7 +153,18 @@ public class FileConnection<T extends Data> extends Connectin{
 		LOG.info("start to write the data into the file");
 		FileInputStream reader;
 		try {
-			reader = new FileInputStream(FileConnection.class.getResource(this.filePath).getFile());
+			String reptileDataPath=ReptileUtils.GetDataPath();
+			if(reptileDataPath==null || reptileDataPath.isEmpty())
+			{
+				return;
+			}
+			//
+			File dataFile=new File(reptileDataPath+"/"+this.fileName);
+			if(!dataFile.exists())
+			{
+				dataFile.createNewFile();
+			}
+			reader = new FileInputStream(dataFile);
 			Document document=new SAXReader().read(reader);
 			Element root=document.getRootElement();
 			LOG.info(root.asXML());
@@ -151,7 +177,8 @@ public class FileConnection<T extends Data> extends Connectin{
 			//开始写入数据
 			OutputFormat opf=new OutputFormat("\t",true,"UTF-8");
 			opf.setTrimText(true);
-			XMLWriter writer=new XMLWriter(new FileOutputStream(this.getClass().getResource(this.filePath).getPath()),opf);
+			LOG.info("start to write the data into "+dataFile.getAbsolutePath());
+			XMLWriter writer=new XMLWriter(new FileOutputStream(dataFile.getAbsolutePath()),opf);
 			if(writer==null)
 			{
 				LOG.info("the writer is null");

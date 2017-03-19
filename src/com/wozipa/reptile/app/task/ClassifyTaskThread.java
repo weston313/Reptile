@@ -142,7 +142,7 @@ public class ClassifyTaskThread extends Thread{
 					{
 						LOG.info("the task "+id+" is over");
 						taskInfo.addProgress(taskProgress);
-						itemThreadContianer.remove(id);
+						itemThreadContianer.remove(taskId);
 					}
 				}
 				try {

@@ -21,6 +21,7 @@ import org.dom4j.io.SAXWriter;
 import org.dom4j.io.XMLWriter;
 
 import com.wozipa.reptile.shop.ShopConfiguration;
+import com.wozipa.reptile.util.ReptileUtils;
 
 public class BaseConfiguration {
 
@@ -38,31 +39,19 @@ public class BaseConfiguration {
 	public BaseConfiguration(String fileName)
 	{
 		container=new HashMap<>();
-		this.xmlPath=getConfPath()+"/"+fileName;
+		String confPath=ReptileUtils.GetConfPath();
+		if(confPath==null || confPath.isEmpty())
+		{
+			return;
+		}
+		this.xmlPath=confPath+"/"+fileName;
 		loadFile(this.xmlPath);
-	}
-	
-	public String getConfPath()
-	{
-		String CONF_DIR=System.getProperty(AppConfiguration.REP_CONF_PATH);
-		if(CONF_DIR==null || CONF_DIR.isEmpty())
-		{
-			CONF_DIR=System.getenv(AppConfiguration.REP_CONF_PATH);
-		}
-		if(CONF_DIR==null || CONF_DIR.isEmpty())
-		{
-			ClassLoader loader=BaseConfiguration.class.getClassLoader();
-			LOG.info(loader);
-			loader.getResource("classpath:config/");
-			System.out.println(loader.getResource("config").getPath());
-			CONF_DIR=loader.getResource("config").getPath();
-		}
-		return CONF_DIR;
 	}
 	
 	public void loadFile(String xmlPath){
 		try {
-			Document document=new SAXReader().read(new File(xmlPath));
+			File file=new File(xmlPath);
+			Document document=new SAXReader().read(file);
 			Element root=document.getRootElement();
 			List<Element> properties=root.elements(PROPERTY_QNAME);
 			for(Element property:properties)

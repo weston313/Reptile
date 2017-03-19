@@ -37,7 +37,7 @@ public class ConnManager {
 	private ConnManager()
 	{
 		this.connPool=new HashMap<>();
-		this.connPool.put(IdFileData.class,new FileConnection<>(IdFileData.FILE_PATH, IdFileData.class));
+		this.connPool.put(IdFileData.class,new FileConnection<>(IdFileData.FILE_NAME, IdFileData.class));
 	}
 	
 	public Connectin<Data> getConnection(Class<? extends Data> cls)
@@ -57,7 +57,7 @@ public class ConnManager {
 		}
 		if(cls==IdFileData.class)
 		{
-			return new FileConnection(IdFileData.FILE_PATH,IdFileData.class);
+			return new FileConnection(IdFileData.FILE_NAME,IdFileData.class);
 		}
 		return null;
 	}

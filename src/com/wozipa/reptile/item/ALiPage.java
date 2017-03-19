@@ -142,12 +142,11 @@ public class ALiPage extends Page{
 			idValue=matcher.group(2);
 			LOG.info(idValue);
 		}
-		
 		//
 		this.id=EncryptUtil.encrypt(this.encrypt, idValue);
-//		ConnManager connManager=ConnManager.getInstance();
-//		Connectin connectin=connManager.getConnection(IdFileData.class);
-//		connectin.write(new IdFileData(this.id,idValue));
+		ConnManager connManager=ConnManager.getInstance();
+		Connectin connectin=connManager.getConnection(IdFileData.class);
+		connectin.write(new IdFileData(this.id,idValue));
 	}
 
 	@Override
@@ -386,7 +385,7 @@ public class ALiPage extends Page{
 	@Override
 	public String getPlatform() {
 		// TODO Auto-generated method stub
-		return "天猫";
+		return "阿里巴巴";
 	}
 
 	@Override
