@@ -14,8 +14,8 @@ public class TaskContainer {
 	
 	private static final Log LOG=LogFactory.getLog(TaskContainer.class);
 	
-	private static final Map<String,TaskInfo> RUN_CONTAINER=new HashMap<>();
-	private static final Map<String,TaskInfo> OVER_CONTAINER=new HashMap<>();
+	private Map<String,TaskInfo> RUN_CONTAINER=new HashMap<>();
+	private Map<String,TaskInfo> OVER_CONTAINER=new HashMap<>();
 	
 	private volatile static TaskContainer container=null;
 	
@@ -30,8 +30,10 @@ public class TaskContainer {
 				{
 					container=new TaskContainer();
 					TaskInfo taskInfo=new TaskInfo();
-					taskInfo.setTaskInfo("test","E:\\test");
-					container.addTask("test",taskInfo);
+					taskInfo.setPregress(0);
+					taskInfo.setTaskInfo("test","/test");
+					taskInfo.setState(STATE.RUNNING);
+					container.addTask("test", taskInfo);
 				}
 			}
 		}
@@ -64,6 +66,12 @@ public class TaskContainer {
 		for(String id:idSet)
 		{
 			TaskInfo taskInfo=RUN_CONTAINER.get(id);
+			infors.add(taskInfo.toText());
+		}
+		Set<String> overIdSet=OVER_CONTAINER.keySet();
+		for(String id:overIdSet)
+		{
+			TaskInfo taskInfo=OVER_CONTAINER.get(id);
 			infors.add(taskInfo.toText());
 		}
 		return infors;

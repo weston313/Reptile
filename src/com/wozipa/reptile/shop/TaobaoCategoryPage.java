@@ -65,7 +65,7 @@ public class TaobaoCategoryPage extends CategoryPage{
 		WebClient webClient=new WebClient(BrowserVersion.CHROME);
 		webClient.getOptions().setJavaScriptEnabled(true);
 		webClient.getOptions().setCssEnabled(false);
-		webClient.getOptions().setTimeout(30000);
+		webClient.getOptions().setTimeout(10000);
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
 		webClient.getOptions().setRedirectEnabled(true);
 		webClient.getCookieManager().setCookiesEnabled(true);
@@ -89,15 +89,17 @@ public class TaobaoCategoryPage extends CategoryPage{
 	public String[] getGoodUrls() {
 		// TODO Auto-generated method stub
 		Key urlKey=configuration.getKey(GOODS_URL);
+		LOG.info(this.pageNode.outerHtml());
 		Element urlNode=getElement(this.pageNode,urlKey);
 		if(urlNode==null)
 		{
+			LOG.info("the url node is null");
 			return null;
 		}
 		String url=urlNode.attr("value");
-		LOG.info(url);
 		if(url==null || url.isEmpty())
 		{
+			LOG.info("the url is null");
 			return null;
 		}
 		//
@@ -108,6 +110,11 @@ public class TaobaoCategoryPage extends CategoryPage{
 		{
 			LOG.info("find it");
 			prefix=matcher.group(1);
+		}
+		if(prefix==null || prefix.isEmpty())
+		{
+			LOG.info("cat get the page "+this.pageUrl);
+			return null;
 		}
 		String goodsUrl=prefix+"/"+url;
 		LOG.info("goods url is "+goodsUrl);
@@ -122,7 +129,7 @@ public class TaobaoCategoryPage extends CategoryPage{
 		String basePage=deletePageNo(url);
 		String goodsUrl=null;
 		do{
-			goodsUrl=basePage+"pageNo="+page;
+			goodsUrl=basePage+"&pageNo="+page;
 			page++;
 		}
 		while(ergodicGoodsUrl(goodsUrl));

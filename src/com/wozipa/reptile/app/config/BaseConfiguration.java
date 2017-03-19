@@ -42,7 +42,7 @@ public class BaseConfiguration {
 		loadFile(this.xmlPath);
 	}
 	
-	private String getConfPath()
+	public String getConfPath()
 	{
 		String CONF_DIR=System.getProperty(AppConfiguration.REP_CONF_PATH);
 		if(CONF_DIR==null || CONF_DIR.isEmpty())
@@ -51,7 +51,11 @@ public class BaseConfiguration {
 		}
 		if(CONF_DIR==null || CONF_DIR.isEmpty())
 		{
-			CONF_DIR=ShopConfiguration.class.getResource("/config").getPath();
+			ClassLoader loader=BaseConfiguration.class.getClassLoader();
+			LOG.info(loader);
+			loader.getResource("classpath:config/");
+			System.out.println(loader.getResource("config").getPath());
+			CONF_DIR=loader.getResource("config").getPath();
 		}
 		return CONF_DIR;
 	}
@@ -99,6 +103,7 @@ public class BaseConfiguration {
 	
 	public void close()
 	{
+		LOG.info("start t delete the data");
 		Document document=DocumentHelper.createDocument();
 		Element root=document.addElement(CONFIGURATION_QNAME);
 		document.setRootElement(root);
@@ -118,6 +123,7 @@ public class BaseConfiguration {
 		}
 		//
 		try {
+			LOG.info(this.xmlPath);
 			FileOutputStream outputStream=new FileOutputStream(new File(this.xmlPath));
 			OutputStreamWriter osw=new OutputStreamWriter(outputStream, "UTF-8");
 			OutputFormat of = new OutputFormat();

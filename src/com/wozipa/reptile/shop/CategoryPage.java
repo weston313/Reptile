@@ -15,6 +15,8 @@ public abstract class CategoryPage {
 	
 	public abstract String[] getGoodUrls();
 	
+	public abstract void setTask(String url);
+	
 	/**
 	 * @param parent
 	 * @param key

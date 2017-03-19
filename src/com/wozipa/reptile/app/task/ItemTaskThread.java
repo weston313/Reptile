@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.omg.CORBA.PUBLIC_MEMBER;
 
+import com.wozipa.reptile.app.task.TaskInfo.STATE;
 import com.wozipa.reptile.item.Page;
 import com.wozipa.reptile.item.PageFactory;
 
@@ -25,15 +26,16 @@ import jxl.write.WritableFont.FontName;
 import jxl.write.biff.RowsExceededException;
 import net.sf.json.JSONObject;
 
-public class TaskThread extends Thread{
+public class ItemTaskThread extends Thread{
 	
-	private static final Log LOG=LogFactory.getLog(TaskThread.class);
+	private static final Log LOG=LogFactory.getLog(ItemTaskThread.class);
 	
-	public enum PAGETYPE{
-		TMALL,TAOBAO,ALIBABA
-	}
+	private static final double THEAD_INIT=10;
+	private static final double PAGES_REP=80;
+	private static final double THEAD_CLOSE=10;
 	
 	private TaskContainer container=null;
+	private boolean taskInfoNeed=true;
 	private TaskInfo taskInfo=null;
 	
 	private String id;
@@ -42,13 +44,28 @@ public class TaskThread extends Thread{
 	private String type;
 	private int encrypt;
 	
-	public TaskThread(String id,String[] pagesUrl,String resultPath,String type,int encrypt) {
+	public ItemTaskThread(String id,String[] pagesUrl,String resultPath,String type,int encrypt) {
 		// TODO Auto-generated constructor stub
 		this.id=id;
 		this.type=type;
 		this.pagesUrl=pagesUrl;
 		this.resultPath=resultPath;
 		this.encrypt=encrypt;
+		
+		init();
+	}
+	
+	public void init()
+	{
+		//create the workspace directory
+		File workspace=new File(resultPath+"/"+id);
+		if(!workspace.exists())
+		{
+			workspace.mkdirs();
+		}
+		this.resultPath=workspace.getPath();
+		//
+		taskInfo=new TaskInfo();
 		this.container=TaskContainer.getInstance();
 	}
 	
@@ -102,6 +119,7 @@ public class TaskThread extends Thread{
 	public void run() {
 		// TODO Auto-generated method stub
 		//start to run the thread
+		createTaskInfoAndSave();
 		String filePath=this.resultPath+"/"+"结果.xls";
 		WritableWorkbook workbook=null;
 		try {
@@ -112,19 +130,20 @@ public class TaskThread extends Thread{
 		}
 		WritableSheet sheet=initlizeHeader(workbook);
 		LOG.info("start the task "+this.id);
-		createTaskInfoAndSave();
 		//
-		LOG.info(pagesUrl.length);
+		taskInfo.setPregress(THEAD_INIT);
+		double pageProgress=PAGES_REP/this.pagesUrl.length;
 		for(int i=0;i<this.pagesUrl.length;i++)
 		{
 			String pageUrl=pagesUrl[i];
-			PAGETYPE type=getPageType(pageUrl);
 			LOG.info(this.type);
 			Page page=PageFactory.GetPage(this.type);
 			page.setTask(pageUrl, this.resultPath,encrypt);
 			page.startGenerate();
 			writeResult(sheet,i, page);
+			taskInfo.addProgress(pageProgress);
 		}
+		LOG.info("任务完成 "+taskInfo.getPregress());
 		//准备结束任务
 		try {
 			workbook.write();
@@ -182,38 +201,27 @@ public class TaskThread extends Thread{
 			e.printStackTrace();
 		}
 	}
-	
-	/**
-	 * @see 获取一个页面的网页类型
-	 * @return
-	 */
-	public PAGETYPE getPageType(String pageUrl)
-	{
-		String page=pageUrl.split("\\?")[0];
-		if(page.contains("tmall"))
-		{
-			return PAGETYPE.TMALL;
-		}
-		else if(page.contains("taobao"))
-		{
-			return PAGETYPE.TAOBAO;
-		}
-		else if(page.contains("1688"))
-		{
-			return PAGETYPE.ALIBABA;
-		}
-		return null;
-	}
 
 	public void close() {
 		container.closeTask(this.id);
+		taskInfo.setPregress(100);
+		taskInfo.setState(STATE.END);
 	}
 	
 	public void createTaskInfoAndSave()
 	{
-		taskInfo=new TaskInfo();
-		taskInfo.setTaskInfo(this.id, this.resultPath);
-		container.addTask(this.id, taskInfo);
+		if(taskInfoNeed)
+		{
+			taskInfo.setTaskInfo(this.id, this.resultPath);
+			taskInfo.setState(STATE.RUNNING);
+			container.addTask(this.id, taskInfo);
+		}
+		
+	}
+	
+	public void setSubTask()
+	{
+		this.taskInfoNeed=false;
 	}
 	
 	/**

@@ -250,15 +250,95 @@
 		<value>str</value>
 	</property>
 	<property>
-		<name>tmall.desc.split</name>
-		<value>"</value>
-		<type>str</type>
-	</property>
-	<property>
 		<name>tmall.desc.value</name>
-		<value><![CDATA[((http|https)://img.alicdn.com)(.*)$]]></value>
+		<value><![CDATA[img[ src~=((http|https)://img.alicdn.com)(.*)$]]]></value>
 		<type>regex</type>
 	</property>
 	
+	<!-- 阿里巴巴页面配置数据 -->
+	<property>
+		<name>alibb.id.regex</name>
+		<value><![CDATA[(https://detail.1688.com/offer/)([0-9]{1,})]]></value>
+		<type>regex</type>
+	</property>
 	
+	<property>
+		<name>alibb.title.container</name>
+		<value>mod-detail-hd</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>alibb.title.node</name>
+		<value>mod-detail-title</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>alibb.title.value</name>
+		<value>d-title</value>
+		<type>class</type>
+	</property>
+	
+	<property>
+		<name>alibb.price.container</name>
+		<value>mod-detail-price</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>alibb.price.node</name>
+		<value><![CDATA[tr[class=price]]]></value>
+		<type>regex</type>
+	</property>
+	<property>
+		<name>alibb.price.value</name>
+		<value><![CDATA[span[class~=(value)(.*)$]]]></value>
+		<type>regex</type>
+	</property>
+	
+	<property>
+		<name>alibb.size.container</name>
+		<value><![CDATA[table[class=table-sku]]]></value>
+		<type>regex</type>
+	</property>
+	<property>
+		<name>alibb.size.node</name>
+		<value><![CDATA[td[class=name]]]></value>
+		<type>regex</type>
+	</property>
+	<property>
+		<name>alibb.size.value</name>
+		<value>span</value>
+		<type>tag</type>
+	</property>
+	
+	<property>
+		<name>alibb.color.container</name>
+		<value><![CDATA[ul[class=list-leading]]]></value>
+		<type></type>
+	</property>
+	<property>
+		<name>alibb.color.node</name>
+		<value><![CDATA[span[class=box-img]]]></value>
+		<type>regex</type>
+	</property>
+	<property>
+		<name>alibb.color.value</name>
+		<value>img</value>
+		<type>tag</type>
+	</property>
+	
+	<property>
+		<name>alibb.desc.url.contianer</name>
+		<value>desc-lazyload-container</value>
+		<type>id</type>
+	</property>
+	<property>
+		<name>alibb.desc.url.attr</name>
+		<value>data-tfs-url</value>
+		<type>attr</type>
+	</property>
+	<property>
+		<name>alibb.desc.goods.node</name>
+		<value><![CDATA[img[src~=((http|https)://cbu01.alicdn.com)(.*)$]]]></value>
+		<type>regex</type>
+	</property>
 </configuration>

@@ -102,6 +102,7 @@ public class FileConnection<T extends Data> extends Connectin{
 	
 	public synchronized void addRow(String id,Data row)
 	{
+		LOG.info("write the data");
 		if(id==null || id.isEmpty())
 		{
 			return;
@@ -192,8 +193,25 @@ public class FileConnection<T extends Data> extends Connectin{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+	}
+	
+	public String getGoodId(String id)
+	{
+		if(id==null || id.isEmpty())
+		{
+			return null;
+		}
+		if(newData.containsKey(id))
+		{
+			IdFileData data=(IdFileData) newData.get(id);
+			return data.getGoodId();
+		}
+		if(container.containsKey(id))
+		{
+			IdFileData data=(IdFileData) container.get(id);
+			return data.getGoodId();
+		}
+		return null;
 	}
 	
 

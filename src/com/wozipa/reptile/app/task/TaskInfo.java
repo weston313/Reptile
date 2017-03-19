@@ -103,5 +103,10 @@ public class TaskInfo {
 		fieldList.add(this.state.getValue());
 		return fieldList.toArray(new String[fieldList.size()]);
 	}
+	
+	public void addProgress(double value)
+	{
+		pregress=pregress+value;
+	}
 
 }

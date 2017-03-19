@@ -17,7 +17,7 @@ public class AppConfiguration {
 	private static final Log LOG=LogFactory.getLog(AppConfiguration.class);
 	
 	public static final String REP_CONF_PATH="REP_CONF_PATH";
-	private static final String CONF_FILE="reptile.xml";
+	private static final String CONF_FILE="reptile-default.xml";
 	
 	public static final String RESULT_PATH="reptile.result.path";
 	public static final String COOKIE_USERNAME="reptile.cookie.username";

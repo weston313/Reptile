@@ -1,5 +1,7 @@
 package com.wozipa.reptile.app;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -17,16 +19,21 @@ import org.eclipse.swt.custom.CTabFolderListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.dialogs.ListDialog;
 
 import com.wozipa.reptile.app.actions.AboutAction;
+import com.wozipa.reptile.app.actions.ClassifyAction;
 import com.wozipa.reptile.app.actions.ConfigAction;
 import com.wozipa.reptile.app.actions.ExitAction;
 import com.wozipa.reptile.app.actions.HelpAction;
+import com.wozipa.reptile.app.actions.IdSeachAction;
+import com.wozipa.reptile.app.actions.ItemPageAction;
 import com.wozipa.reptile.app.actions.JobListAction;
 import com.wozipa.reptile.app.actions.NewAction;
 import com.wozipa.reptile.app.actions.SaveAction;
@@ -35,9 +42,16 @@ import com.wozipa.reptile.app.config.AppConfiguration;
 import com.wozipa.reptile.app.config.AppSizeConfig;
 import com.wozipa.reptile.app.dialog.ConfigDialog;
 import com.wozipa.reptile.app.tab.ConfigTabbar;
+import com.wozipa.reptile.app.tab.IdSearchTabbar;
+import com.wozipa.reptile.app.tab.ItemPageTabbar;
+import com.wozipa.reptile.app.tab.JobListTabbar;
 import com.wozipa.reptile.cookie.CookieManagerCache;
+import com.wozipa.reptile.data.ConnManager;
+import com.wozipa.reptile.data.file.IdFileData;
 
 public class ApplicationWindows extends ApplicationWindow{
+	
+	private static final Log LOG=LogFactory.getLog(ApplicationWindows.class);
 	
 	private static ApplicationWindows app;
 	private NewAction newAction;
@@ -48,6 +62,10 @@ public class ApplicationWindows extends ApplicationWindow{
 	private ConfigAction configAction;
 	private HelpAction helpAction;
 	private AboutAction aboutAction;
+	private ItemPageAction itemPageAction;
+	private ClassifyAction classifyAction;
+	private IdSeachAction idSeachAction;
+	
 	private CTabFolder content;
 	//
 	public ApplicationWindows() {
@@ -61,6 +79,9 @@ public class ApplicationWindows extends ApplicationWindow{
 		configAction=new ConfigAction();
 		helpAction=new HelpAction();
 		aboutAction=new AboutAction();
+		itemPageAction=new ItemPageAction();
+		classifyAction=new ClassifyAction();
+		idSeachAction=new IdSeachAction();
 		// TODO Auto-generated constructor stub
 		this.addMenuBar();
 		this.addToolBar(SWT.FLAT);
@@ -118,11 +139,14 @@ public class ApplicationWindows extends ApplicationWindow{
 		menuBar.add(helpMenu);
 		//添加文件功能
 		fileMenu.add(newAction);
+		fileMenu.add(itemPageAction);
+		fileMenu.add(classifyAction);
 		fileMenu.add(saveAction);
 		fileMenu.add(saveAsAction);
 		fileMenu.add(exitAction);
 		//添加任务功能
 		jobMenu.add(jobListAction);
+		jobMenu.add(idSeachAction);
 		//添加配置功能
 		confMenu.add(configAction);
 		//添加帮助功能
@@ -136,9 +160,11 @@ public class ApplicationWindows extends ApplicationWindow{
 		// TODO Auto-generated method stub
 		ToolBarManager toolBar=new ToolBarManager(style);
 		
-		toolBar.add(newAction);
+		toolBar.add(itemPageAction);
+		toolBar.add(classifyAction);
+		toolBar.add(jobListAction);
+		toolBar.add(idSeachAction);
 		toolBar.add(configAction);
-		toolBar.add(this.jobListAction);
 		return toolBar;
 	}
 		
@@ -182,7 +208,13 @@ public class ApplicationWindows extends ApplicationWindow{
 				// TODO Auto-generated method stub
 				if(arg0.item.equals(configAction.getTabbar()))
 				{
-					configAction.setTabbar(null);
+					configAction.setTabbar(null); 
+				}
+				else if(arg0.item.getClass().equals(JobListTabbar.class))
+				{
+					LOG.info("start to close the job list");
+					JobListTabbar tabbar=(JobListTabbar)arg0.item;
+					tabbar.close();
 				}
 			}
 		});
@@ -200,7 +232,9 @@ public class ApplicationWindows extends ApplicationWindow{
 	@Override
 	public boolean close() {
 		// TODO Auto-generated method stub
-		AppConfiguration.getConfiguration().close();;
+		LOG.info("close");
+		AppConfiguration.getConfiguration().close();
+		ConnManager.getInstance().close();
 		return super.close();
 	}
 

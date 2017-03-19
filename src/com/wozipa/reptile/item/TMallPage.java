@@ -80,7 +80,6 @@ public class TMallPage extends Page{
 	private static final String DESC_URL_KEYWORK="tmall.desc.url.keyword";
 	private static final String DESC_URL_SPLIT="tmall.desc.url.split";
 	private static final String DESC_URL_DOMAIN="tmall.desc.url.domain";
-	private static final String DESC_VALUE_SPLIT="tmall.desc.split";
 	private static final String DESC_VALUE_REGEX="tmall.desc.value";
 	
 	protected Element pageNode;
@@ -280,26 +279,25 @@ public class TMallPage extends Page{
 		}
 		try {
 			Response response=Jsoup.connect(descUrl).execute();
-			String body=response.body();
-			Key splitKey=configuration.getKey(DESC_VALUE_SPLIT);
-			Key valueRegexKey=configuration.getKey(DESC_VALUE_REGEX);
-			parts=body.split(splitKey.getVlaue());
-			for(String part:parts)
+			Element document=response.parse();
+			Key key=configuration.getKey(DESC_VALUE_REGEX);
+			Elements imgs=document.select(key.getVlaue());
+			for(int i=0;i<imgs.size();i++)
 			{
-				if(part.matches(valueRegexKey.getVlaue()))
+				Element imgNode=imgs.get(i);
+				String imgUrl=imgNode.attr("src");
+				imgUrl=correctUrl(imgUrl);
+				String name=id;
+				if(name==null || name.isEmpty())
 				{
-					String name=this.id;
-					if(name==null || name.isEmpty())
-					{
-						name="img";
-					}
-					if(this.imageCount>0)
-					{
-						name=name+"_"+this.imageCount;
-					}
-					downloadImage(part,name);
-					this.imageCount++;
+					name="img";
 				}
+				if(this.imageCount>0)
+				{
+					name=name+"_"+this.imageCount;
+				}
+				downloadImage(imgUrl,name);
+				this.imageCount++;
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

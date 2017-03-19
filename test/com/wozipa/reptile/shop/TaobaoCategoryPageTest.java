@@ -16,8 +16,12 @@ public class TaobaoCategoryPageTest {
 	@Test
 	public void test() {
 		TaobaoCategoryPage page=new TaobaoCategoryPage();
-		page.setTask("https://shop73428660.taobao.com/category-1261961156.htm?spm=a1z10.5-c-s.w5002-15343728924.3.N8eqN6&search=y&catName=%CF%C4%BC%BE%BE%AD%B5%E4");
+		page.setTask("https://bschina.taobao.com/search.htm?spm=a1z10.1-c-s.w5001-14477384681.12.3cnq7i&mid=w-702818742-0&viewType=grid&keyword=%CD%E2%CC%D7&orderType=hotsell_desc&scene=taobao_shop");
 		String[] urls=page.getGoodUrls();
+		if(urls==null)
+		{
+			return;
+		}
 		for(String url:urls)
 		{
 			System.out.println("url is "+url);

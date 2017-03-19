@@ -1,11 +1,7 @@
 package com.wozipa.reptile.app.tab;
 
-import java.awt.event.MouseAdapter;
-
-import org.apache.bcel.generic.IINC;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -21,8 +17,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
-
 import com.wozipa.reptile.app.task.TaskContainer;
 
 public class JobListTabbar extends CTabItem{
@@ -36,6 +30,7 @@ public class JobListTabbar extends CTabItem{
 	private Composite composite;
 	
 	private Table jobTable;
+	private TaskInfoFresh fresh;
 
 	public JobListTabbar(CTabFolder parent, int style) {
 		super(parent, style);
@@ -64,6 +59,8 @@ public class JobListTabbar extends CTabItem{
 	{
 		createListArea();
 		loadJobInfos();
+		fresh=new TaskInfoFresh(this);
+		fresh.start();
 	}
 	
 	/**
@@ -166,14 +163,71 @@ public class JobListTabbar extends CTabItem{
 	
 	public void loadJobInfos()
 	{
-		jobTable.clearAll();
+		int index=jobTable.getSelectionIndex();
+		String id=null;
+		if(index>=0)
+		{
+			id=jobTable.getItem(index).getText(0);
+		}
+		jobTable.removeAll();
 		java.util.List<String[]> infors=container.getTasks();
 		for(int i=0;i<infors.size();i++)
 		{
 			TableItem item=new TableItem(jobTable,SWT.NONE,i);
 			item.setText(infors.get(i));
+			if(item.getText(0).equals(id))
+			{
+				jobTable.select(i);
+			}
+		}
+	}
+	
+	public class TaskInfoFresh extends Thread
+	{
+		private JobListTabbar tabbar=null;
+		
+		public TaskInfoFresh(JobListTabbar tabbar) {
+			// TODO Auto-generated constructor stub
+			this.tabbar=tabbar;
 		}
 		
+		private boolean doRun=true;
+		
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			while(doRun)
+			{
+				tabbar.getDisplay().syncExec(new Runnable() {
+					public void run() {
+						tabbar.loadJobInfos();
+					}
+				});
+				try {
+					this.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		public void shutdown()
+		{
+			doRun=false;
+		}
 	}
-
+	
+	public void close()
+	{
+		LOG.info("start to stop the fresh");
+		fresh.shutdown();
+//		try {
+//			fresh.join();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+	}
+	
 }

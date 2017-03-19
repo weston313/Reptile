@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
@@ -33,12 +34,14 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
 import com.wozipa.reptile.app.config.AppConfiguration;
+import com.wozipa.reptile.app.tab.ItemPageTabbar.StartTaskListern;
+import com.wozipa.reptile.app.task.ClassifyTaskThread;
 import com.wozipa.reptile.app.task.ItemTaskThread;
 import com.wozipa.reptile.item.PageFactory;
 
-public class ItemPageTabbar extends CTabItem{
-	
-	private static final Log LOG=LogFactory.getLog(ItemPageTabbar.class);
+public class ClassifyPageTabbar extends CTabItem{
+
+private static final Log LOG=LogFactory.getLog(ItemPageTabbar.class);
 	
 	private static final String SEPARETOR=";";
 	private static final String SEPARETOR_REGEX="[,;\r\n]{1,}";
@@ -61,13 +64,13 @@ public class ItemPageTabbar extends CTabItem{
 	
 	private String id;
 
-	public ItemPageTabbar(CTabFolder parent, int style) {
+	public ClassifyPageTabbar(CTabFolder parent, int style) {
 		super(parent, style);
 		
 		this.parent=parent;
 		this.style=style;
 		// TODO Auto-generated constructor stub
-		this.setText("网页爬虫");
+		this.setText("分类爬取");
 		this.setShowClose(true);
 		composite=new Composite(parent,style);
 		this.setControl(composite);
@@ -115,7 +118,7 @@ public class ItemPageTabbar extends CTabItem{
 	public void createInputArea()
 	{
 		Text label=new Text(composite,SWT.NONE);
-		label.setText("请输入网址");
+		label.setText("输入分类网址");
 		label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 2));
 		
 		pagesText=new Text(composite, SWT.BORDER|SWT.MULTI|SWT.SCROLL_LINE);
@@ -159,7 +162,8 @@ public class ItemPageTabbar extends CTabItem{
 	{
 		Label label=new Label(this.composite,SWT.NONE);
 		label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 2));
-		label.setText("网页类型");
+		label.setText("商品分类类型");
+		label.setBackground(new Color(null,new RGB(255, 255, 255)));
 		
 		Group group=new Group(this.composite, SWT.NONE);
 		group.setBackground(new Color(null, new RGB(255, 255, 255)));
@@ -275,12 +279,8 @@ public class ItemPageTabbar extends CTabItem{
 			int encrypt=encodeList.getSelectionIndex();
 			//
 			pagesUrl=set.toArray(new String[set.size()]);
-			ItemTaskThread taskThread=new ItemTaskThread(id, pagesUrl,resultPath,type,encrypt);
+			ClassifyTaskThread taskThread=new ClassifyTaskThread(id, pagesUrl,resultPath,type,encrypt);
 			taskThread.start();
-			//
-			JobInfoTabbar jobInfoTabbar=new JobInfoTabbar(parent, encrypt);
-			jobInfoTabbar.setTaskId(id);
-			jobInfoTabbar.createContent();
 		}
 		
 		public String getPageType()
@@ -301,4 +301,5 @@ public class ItemPageTabbar extends CTabItem{
 			return (String) tmp.getData("value");
 		}
 	}
+
 }

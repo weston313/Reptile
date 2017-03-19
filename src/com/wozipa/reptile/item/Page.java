@@ -69,10 +69,8 @@ public abstract class Page {
 			LOG.info("the container node is null");
 			containerNode=pageNode;
 		}
-		LOG.info(containerNode.outerHtml());
 		//
 		Key nodeKey=configuration.getKey(nodeName);
-		LOG.info("node name is "+nodeKey.getVlaue());
 		Element node=getElement(containerNode,nodeKey);
 		if(node==null)
 		{
@@ -203,10 +201,35 @@ public abstract class Page {
 		{
 			node=parent.getElementsByClass(key.getVlaue()).first();
 		}
-		else
+		else if(type.toLowerCase().equals("tag"))
 		{
 			node=parent.getElementsByTag(key.getVlaue()).first();
 		}
+		else if(type.toLowerCase().equals("regex"))
+		{
+			node=parent.select(key.getVlaue()).first();
+		}
 		return node;
+	}
+	
+	public String correctUrl(String url)
+	{
+		if(url.startsWith("\\"))
+		{
+			url=url.substring(1);
+		}
+		if(url.startsWith("\""))
+		{
+			url=url.substring(1);
+		}
+		if(url.endsWith("\""))
+		{
+			url=url.substring(0, url.length()-2);
+		}
+		if(url.endsWith("\""))
+		{
+			url=url.substring(0, url.length()-2);
+		}
+		return url;
 	}
 }
