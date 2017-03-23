@@ -13,4 +13,10 @@ public class SaveAsAction extends Action{
 		this.setToolTipText("另存为");
 //		this.setImageDescriptor(null);
 	}
+	
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		System.out.println("功能正在开发中...");
+	}
 }

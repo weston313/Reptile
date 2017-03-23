@@ -5,6 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -48,6 +50,15 @@ public class JobListTabbar extends CTabItem{
 		composite.setLayout(layout);
 		//
 		container=TaskContainer.getInstance();
+		//
+		this.addDisposeListener(new DisposeListener() {
+			
+			@Override
+			public void widgetDisposed(DisposeEvent arg0) {
+				// TODO Auto-generated method stub
+				fresh.shutdown();
+			}
+		});
 	}
 	
 	/**
@@ -133,6 +144,10 @@ public class JobListTabbar extends CTabItem{
 			public void mouseDoubleClick(MouseEvent arg0) {
 				// TODO Auto-generated method stub
 				int index=jobTable.getSelectionIndex();
+				if(index<0)
+				{
+					return;
+				}
 				System.out.println(index);
 				TableItem item=jobTable.getItem(index);
 				String id=item.getText(0);
@@ -210,6 +225,7 @@ public class JobListTabbar extends CTabItem{
 					e.printStackTrace();
 				}
 			}
+			LOG.info("the job list fresh listern thread is closing");
 		}
 		
 		public void shutdown()
@@ -217,17 +233,4 @@ public class JobListTabbar extends CTabItem{
 			doRun=false;
 		}
 	}
-	
-	public void close()
-	{
-		LOG.info("start to stop the fresh");
-		fresh.shutdown();
-//		try {
-//			fresh.join();
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-	}
-	
 }

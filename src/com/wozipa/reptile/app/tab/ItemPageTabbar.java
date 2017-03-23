@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
+import com.wozipa.reptile.app.ApplicationWindows;
 import com.wozipa.reptile.app.config.AppConfiguration;
 import com.wozipa.reptile.app.task.ItemTaskThread;
 import com.wozipa.reptile.item.PageFactory;
@@ -273,14 +274,29 @@ public class ItemPageTabbar extends CTabItem{
 			String type=getPageType();
 			//get the encrypt id
 			int encrypt=encodeList.getSelectionIndex();
-			//
-			pagesUrl=set.toArray(new String[set.size()]);
-			ItemTaskThread taskThread=new ItemTaskThread(id, pagesUrl,resultPath,type,encrypt);
-			taskThread.start();
-			//
-			JobInfoTabbar jobInfoTabbar=new JobInfoTabbar(parent, encrypt);
-			jobInfoTabbar.setTaskId(id);
-			jobInfoTabbar.createContent();
+			//show the message
+			MessageBox message=new MessageBox(ApplicationWindows.GetApp().getShell(),SWT.ICON_INFORMATION|SWT.YES|SWT.NO);
+			message.setMessage("将进行任务，任务信息为：\n"
+					+ "任务ID\t"+id+"\n"
+					+ "ID编码 \t"+ID_ENCODE[encrypt]+"\n"
+					+ "页面类型\t"+type+"\n"
+					+ "结果位置 \t"+resultPath+"\n"
+					+ "网页数据\t"+pages);
+			int code=message.open();
+			if(code==SWT.YES)
+			{
+				//
+				pagesUrl=set.toArray(new String[set.size()]);
+				ItemTaskThread taskThread=new ItemTaskThread(id, pagesUrl,resultPath,type,encrypt);
+				taskThread.start();
+				//
+				JobInfoTabbar jobInfoTabbar=new JobInfoTabbar(parent, encrypt);
+				jobInfoTabbar.setTaskId(id);
+				jobInfoTabbar.createContent();
+				//
+				dispose();
+			}
+			
 		}
 		
 		public String getPageType()

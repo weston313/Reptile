@@ -14,4 +14,10 @@ public class HelpAction extends Action{
 	    setToolTipText("帮助");
 	    //setImageDescriptor(ImageDescriptor.createFromFile(NewAction.class,"icons\\new.gif"));
 	}
+	
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		super.run();
+	}
 }

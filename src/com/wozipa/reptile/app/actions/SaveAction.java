@@ -18,7 +18,7 @@ public class SaveAction extends Action{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		System.out.println("另存为按钮点击事件");
+		System.out.println("功能正在开发中...");
 	}
 
 }

@@ -14,6 +14,8 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -33,6 +35,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
+import com.wozipa.reptile.app.ApplicationWindows;
 import com.wozipa.reptile.app.config.AppConfiguration;
 import com.wozipa.reptile.app.tab.ItemPageTabbar.StartTaskListern;
 import com.wozipa.reptile.app.task.ClassifyTaskThread;
@@ -79,7 +82,7 @@ private static final Log LOG=LogFactory.getLog(ItemPageTabbar.class);
 		//开始初始化任务信息
 		this.id=UUID.randomUUID().toString();
 		configuration=AppConfiguration.getConfiguration();
-		
+		//
 	}
 	
 	/**
@@ -278,9 +281,28 @@ private static final Log LOG=LogFactory.getLog(ItemPageTabbar.class);
 			//get the encrypt id
 			int encrypt=encodeList.getSelectionIndex();
 			//
-			pagesUrl=set.toArray(new String[set.size()]);
-			ClassifyTaskThread taskThread=new ClassifyTaskThread(id, pagesUrl,resultPath,type,encrypt);
-			taskThread.start();
+			MessageBox messageBox=new MessageBox(ApplicationWindows.GetApp().getShell(),SWT.ICON_INFORMATION|SWT.YES|SWT.NO);
+			messageBox.setMessage("任务信息：\n"
+					+"任务id\t"+id+"\n"
+					+"ID编码\t"+ID_ENCODE[encrypt]+"\n"
+					+"页面类型\t"+type+"\n"
+					+"任务结果\t"+resultPath+"\n"
+					+"网页数据\t"+pages);
+			int code=messageBox.open();
+			if(code==SWT.YES)
+			{
+				pagesUrl=set.toArray(new String[set.size()]);
+				ClassifyTaskThread taskThread=new ClassifyTaskThread(id, pagesUrl,resultPath,type,encrypt);
+				taskThread.start();
+				//
+				JobInfoTabbar tabbar=new JobInfoTabbar(parent,style);
+				tabbar.setTaskId(id);
+				tabbar.createContent();
+				//
+				dispose();
+			}
+			//
+			
 		}
 		
 		public String getPageType()

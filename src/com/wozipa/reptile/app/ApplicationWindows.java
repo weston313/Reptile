@@ -208,13 +208,17 @@ public class ApplicationWindows extends ApplicationWindow{
 				// TODO Auto-generated method stub
 				if(arg0.item.equals(configAction.getTabbar()))
 				{
+					System.out.println("close");
 					configAction.setTabbar(null); 
 				}
 				else if(arg0.item.getClass().equals(JobListTabbar.class))
 				{
 					LOG.info("start to close the job list");
-					JobListTabbar tabbar=(JobListTabbar)arg0.item;
-					tabbar.close();
+					jobListAction.close();
+				}
+				else
+				{
+					
 				}
 			}
 		});

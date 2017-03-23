@@ -8,6 +8,13 @@ import com.wozipa.reptile.app.tab.JobListTabbar;
 
 public class JobListAction extends Action{
 	
+	private JobListTabbar tabbar=null;
+	
+	public void close()
+	{
+		tabbar=null;
+	}
+	
 	public JobListAction()
 	{
 		super();
@@ -20,9 +27,12 @@ public class JobListAction extends Action{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		ApplicationWindows windows=ApplicationWindows.GetApp();
-		JobListTabbar tabbar=new JobListTabbar(windows.getContent(), SWT.NONE);
-		tabbar.createContent();
+		if(tabbar==null)
+		{
+			ApplicationWindows windows=ApplicationWindows.GetApp();
+			tabbar=new JobListTabbar(windows.getContent(), SWT.NONE);
+			tabbar.createContent();
+		}
 	}
 
 }

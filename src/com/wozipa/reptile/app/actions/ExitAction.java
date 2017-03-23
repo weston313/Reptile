@@ -3,6 +3,8 @@ package com.wozipa.reptile.app.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 
+import com.wozipa.reptile.app.ApplicationWindows;
+
 public class ExitAction extends Action{
 	
 	public ExitAction()
@@ -14,4 +16,9 @@ public class ExitAction extends Action{
 	    //setImageDescriptor(ImageDescriptor.createFromFile(NewAction.class,"icons\\new.gif"));
 	}
 
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		ApplicationWindows.GetApp().getShell().close();
+	}
 }
