@@ -167,7 +167,6 @@ public class FileConnection<T extends Data> extends Connectin{
 			reader = new FileInputStream(dataFile);
 			Document document=new SAXReader().read(reader);
 			Element root=document.getRootElement();
-			LOG.info(root.asXML());
 			Set<String> keySet=newData.keySet();
 			for(String key:keySet)
 			{

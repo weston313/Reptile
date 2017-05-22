@@ -68,7 +68,8 @@ public abstract class Page {
 		{
 			LOG.info("the container node is null");
 			LOG.info("key is "+containerKey.getVlaue()+" and "+containerKey.getType());
-			containerNode=pageNode;
+//			containerNode=pageNode;
+			return "";
 		}
 		//
 		Key nodeKey=configuration.getKey(nodeName);

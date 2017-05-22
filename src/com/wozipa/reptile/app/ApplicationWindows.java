@@ -40,6 +40,7 @@ import com.wozipa.reptile.app.actions.SaveAction;
 import com.wozipa.reptile.app.actions.SaveAsAction;
 import com.wozipa.reptile.app.config.AppConfiguration;
 import com.wozipa.reptile.app.config.AppSizeConfig;
+import com.wozipa.reptile.app.config.Key;
 import com.wozipa.reptile.app.dialog.ConfigDialog;
 import com.wozipa.reptile.app.tab.ConfigTabbar;
 import com.wozipa.reptile.app.tab.IdSearchTabbar;
@@ -88,7 +89,8 @@ public class ApplicationWindows extends ApplicationWindow{
 		this.addStatusLine();
 		//init the configuration
 		AppConfiguration configuration=AppConfiguration.getConfiguration();
-		String resultPath=configuration.getKey(AppConfiguration.RESULT_PATH).getVlaue();
+		Key resultPathKey=configuration.getKey(AppConfiguration.RESULT_PATH);
+		String resultPath=resultPathKey.getVlaue();
 		String username=configuration.getKey(AppConfiguration.COOKIE_USERNAME).getVlaue();
 		String password=configuration.getKey(AppConfiguration.COOKIE_PASSWORD).getVlaue();
 		if(resultPath==null || resultPath.isEmpty() || username==null || username.isEmpty() || password==null || password.isEmpty())
@@ -172,8 +174,6 @@ public class ApplicationWindows extends ApplicationWindow{
 	protected Control createContents(Composite parent) {
 		// TODO Auto-generated method stub
 		//init 
-		
-		//
 		parent.setBackground(new Color(null, new RGB(255, 255, 255)));
 		content=new CTabFolder(parent,SWT.NONE);
 		content.setBackground(new Color(null, new RGB(255, 255, 255)));
@@ -188,7 +188,7 @@ public class ApplicationWindows extends ApplicationWindow{
 			@Override
 			public void restore(CTabFolderEvent arg0) {
 				// TODO Auto-generated method stub
-				
+				System.out.println("restore");
 			}
 			
 			@Override
@@ -208,17 +208,12 @@ public class ApplicationWindows extends ApplicationWindow{
 				// TODO Auto-generated method stub
 				if(arg0.item.equals(configAction.getTabbar()))
 				{
-					System.out.println("close");
 					configAction.setTabbar(null); 
 				}
 				else if(arg0.item.getClass().equals(JobListTabbar.class))
 				{
 					LOG.info("start to close the job list");
 					jobListAction.close();
-				}
-				else
-				{
-					
 				}
 			}
 		});

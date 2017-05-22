@@ -32,12 +32,13 @@ public class ConfigAction extends Action{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		ApplicationWindows windows=ApplicationWindows.GetApp();
 		if(tabbar==null)
 		{
-			ApplicationWindows windows=ApplicationWindows.GetApp();
 			tabbar=new ConfigTabbar(windows.getContent(),SWT.NONE);
 			tabbar.createContent();
 		}
+		windows.getContent().setSelection(tabbar);
 	}
 	
 	

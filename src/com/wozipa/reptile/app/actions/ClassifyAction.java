@@ -2,6 +2,7 @@ package com.wozipa.reptile.app.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 
 import com.wozipa.reptile.app.ApplicationWindows;
 import com.wozipa.reptile.app.tab.ClassifyPageTabbar;
@@ -20,9 +21,10 @@ public class ClassifyAction extends Action{
 	
 	public void run() {
 		ApplicationWindows windows=ApplicationWindows.GetApp();
-		ClassifyPageTabbar pageTabbar=new ClassifyPageTabbar(windows.getContent(), SWT.NONE);
+		CTabFolder parent=windows.getContent();
+		ClassifyPageTabbar pageTabbar=new ClassifyPageTabbar(parent, SWT.NONE);
 		pageTabbar.createContent();
-		
+		parent.setSelection(pageTabbar);
 	}
 
 }

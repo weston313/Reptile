@@ -44,7 +44,7 @@ public class ItemPageTabbar extends CTabItem{
 	private static final String SEPARETOR=";";
 	private static final String SEPARETOR_REGEX="[,;\r\n]{1,}";
 	
-	private static final String[] ID_ENCODE={"无加密","倒转加密","前缀加密","随机加密","MD5加密","SHA加密"};
+	private static final String[] ID_ENCODE={"无加密","倒转加密","前缀加密"};
 	
 	private CTabFolder parent;
 	private Composite composite;
@@ -77,7 +77,8 @@ public class ItemPageTabbar extends CTabItem{
 		//开始初始化任务信息
 		this.id=UUID.randomUUID().toString();
 		configuration=AppConfiguration.getConfiguration();
-		
+		//
+		//parent.setSelection(this);
 	}
 	
 	/**
@@ -94,7 +95,7 @@ public class ItemPageTabbar extends CTabItem{
 		createEncodeArea();
 		createOutputArea();
 		createSubmitArea();
-
+		//
 	}
 	
 	public void createIdArea()
@@ -275,7 +276,7 @@ public class ItemPageTabbar extends CTabItem{
 			//get the encrypt id
 			int encrypt=encodeList.getSelectionIndex();
 			//show the message
-			MessageBox message=new MessageBox(ApplicationWindows.GetApp().getShell(),SWT.ICON_INFORMATION|SWT.YES|SWT.NO);
+			MessageBox message=new MessageBox(Display.getCurrent().getActiveShell(),SWT.ICON_INFORMATION|SWT.YES|SWT.NO);
 			message.setMessage("将进行任务，任务信息为：\n"
 					+ "任务ID\t"+id+"\n"
 					+ "ID编码 \t"+ID_ENCODE[encrypt]+"\n"

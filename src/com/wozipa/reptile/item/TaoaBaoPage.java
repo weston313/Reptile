@@ -27,6 +27,8 @@ import com.wozipa.reptile.app.config.Key;
 import com.wozipa.reptile.cookie.CookieManagerCache;
 import com.wozipa.reptile.data.ConnManager;
 import com.wozipa.reptile.data.Connectin;
+import com.wozipa.reptile.data.db.DBConnection;
+import com.wozipa.reptile.data.db.IdDBData;
 import com.wozipa.reptile.data.file.IdFileData;
 import com.wozipa.reptile.id.encrypt.EncryptUtil;
 
@@ -35,6 +37,8 @@ import net.sf.json.JSONObject;
 public class TaoaBaoPage extends Page{
 	
 	private static final Log LOG=LogFactory.getLog(TaoaBaoPage.class);
+	
+	private static final String PREFIX_ID="";
 	
 	private static final Map<String,String> TB_PAGE_CONF=new HashMap<>();
 	private static final String TB_CONF_FILE="taobao.xml";
@@ -154,10 +158,13 @@ public class TaoaBaoPage extends Page{
 			}
 		}
 		//进行加密,然后将数据封装到任务中
-		this.id=EncryptUtil.encrypt(this.idEncrypt, idValue);
-		ConnManager connManager=ConnManager.getInstance();
-		Connectin connectin=connManager.getConnection(IdFileData.class);
-		connectin.write(new IdFileData(this.id,idValue));
+		this.id=PREFIX_ID+EncryptUtil.encrypt(this.idEncrypt, idValue);
+//		ConnManager connManager=ConnManager.getInstance();
+//		Connectin connectin=connManager.getConnection(IdFileData.class);
+//		connectin.write(new IdFileData(this.id,idValue));
+		DBConnection connection=new DBConnection();
+		connection.write(new IdDBData(this.id,idValue,resultPath));
+		connection.close();
 	}
 
 	@Override
@@ -347,8 +354,8 @@ public class TaoaBaoPage extends Page{
 		generateDate();
 		generatePrice();
 		generateSize();
-//		generateImages();
-		generateDescription();
+		generateImages();
+//		generateDescription();
 		System.out.println(this.toJSON());
 	}
 	

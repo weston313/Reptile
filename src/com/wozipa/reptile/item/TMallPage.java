@@ -37,6 +37,8 @@ import com.wozipa.reptile.app.config.Key;
 import com.wozipa.reptile.cookie.CookieManagerCache;
 import com.wozipa.reptile.data.ConnManager;
 import com.wozipa.reptile.data.Connectin;
+import com.wozipa.reptile.data.db.DBConnection;
+import com.wozipa.reptile.data.db.IdDBData;
 import com.wozipa.reptile.data.file.IdFileData;
 import com.wozipa.reptile.id.encrypt.EncryptUtil;
 
@@ -45,6 +47,8 @@ import net.sf.json.JSONObject;
 public class TMallPage extends Page{
 	
 	private static final Log LOG=LogFactory.getLog(TMallPage.class);
+	
+	private static final String PREFIX_ID="M";
 	
 	//商品ID
 	private static final String ID_REGEX="tmall.id.regex";
@@ -152,10 +156,13 @@ public class TMallPage extends Page{
 			}
 		}
 		//
-		this.id=EncryptUtil.encrypt(this.encrypt, idValue);
-		ConnManager connManager=ConnManager.getInstance();
-		Connectin connectin=connManager.getConnection(IdFileData.class);
-		connectin.write(new IdFileData(this.id,idValue));
+		this.id=PREFIX_ID+EncryptUtil.encrypt(this.encrypt, idValue);
+//		ConnManager connManager=ConnManager.getInstance();
+//		Connectin connectin=connManager.getConnection(IdFileData.class);
+//		connectin.write(new IdFileData(this.id,idValue));
+		DBConnection connection=new DBConnection();
+		connection.write(new IdDBData(this.id,idValue,resultPath));
+		connection.close();
 	}
 
 	@Override
@@ -223,7 +230,6 @@ public class TMallPage extends Page{
 		//
 		String thumnStr=configuration.getKey(IMAGES_THUMB).getVlaue();
 		String zoomStr=configuration.getKey(IMAGES_ZOOM).getVlaue();
-		int k=0;
 		for(Element image:valuesNode)
 		{
 			String srcUrl=image.attr("src");
@@ -232,13 +238,21 @@ public class TMallPage extends Page{
 				srcUrl=srcUrl.replaceAll(thumnStr, zoomStr);
 			}
 			//
-			String name=this.id;
-			if(k>0)
+			if(srcUrl.startsWith("//"))
 			{
-				name=name+"_0"+k;
+				srcUrl="http:"+srcUrl;
+			}
+			else if(srcUrl.startsWith("http://"))
+			{
+				srcUrl="http://"+srcUrl;
+			}
+			String name=this.id;
+			if(this.imageCount>0)
+			{
+				name=name+"_0"+this.imageCount;
 			}
 			downloadImage(srcUrl, name);
-			
+			this.imageCount++;
 		}
 	}
 	
@@ -370,10 +384,10 @@ public class TMallPage extends Page{
 		generateTitle();
 		generateColor();
 		generateDate();
-//		generateImages();
+		generateImages();
 		generatePrice();
 		generateSize();
-		generateDescription();
+//		generateDescription();
 
 	}
 

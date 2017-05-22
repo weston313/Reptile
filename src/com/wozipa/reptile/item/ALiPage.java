@@ -25,6 +25,8 @@ import com.wozipa.reptile.app.config.Key;
 import com.wozipa.reptile.cookie.CookieManagerCache;
 import com.wozipa.reptile.data.ConnManager;
 import com.wozipa.reptile.data.Connectin;
+import com.wozipa.reptile.data.db.DBConnection;
+import com.wozipa.reptile.data.db.IdDBData;
 import com.wozipa.reptile.data.file.IdFileData;
 import com.wozipa.reptile.id.encrypt.EncryptUtil;
 import net.sf.json.JSONObject;
@@ -34,10 +36,15 @@ import org.jsoup.Jsoup;
 public class ALiPage extends Page{
 	
 	private static final Log LOG=LogFactory.getLog(ALiPage.class);
+
+	private static final String PREFIX_ID="B";
+	
 	// 商品照片
 	private static final String IMAGES_CONTAINER = "alibb.images.container";
 	private static final String IMAGES_NODE = "alibb.images.node";
 	private static final String IMAGES_VALUE = "alibb.images.value";
+	private static final String IMAGES_THUMB="alibb.iamges.thumb";
+	private static final String IMAGES_ZOOM="alibb.images.zoom";
 	
 	private static final String ID_REGEX="alibb.id.regex";
 
@@ -143,10 +150,13 @@ public class ALiPage extends Page{
 			LOG.info(idValue);
 		}
 		//
-		this.id=EncryptUtil.encrypt(this.encrypt, idValue);
-		ConnManager connManager=ConnManager.getInstance();
-		Connectin connectin=connManager.getConnection(IdFileData.class);
-		connectin.write(new IdFileData(this.id,idValue));
+		this.id=PREFIX_ID+EncryptUtil.encrypt(this.encrypt, idValue);
+//		ConnManager connManager=ConnManager.getInstance();
+//		Connectin connectin=connManager.getConnection(IdFileData.class);
+//		connectin.write(new IdFileData(this.id,idValue));
+		DBConnection connection=new DBConnection();
+		connection.write(new IdDBData(this.id,idValue,resultPath));
+		connection.close();
 	}
 
 	@Override
@@ -164,7 +174,10 @@ public class ALiPage extends Page{
 		Element containerNode=getElement(this.pageNode, containerKey);
 		if(containerNode==null)
 		{
-			containerNode=this.pageNode;
+//			containerNode=this.pageNode;
+			LOG.info("the contianer node is null");
+			this.size="";
+			return;
 		}
 		//
 		Key nodeKey=configuration.getKey(SIZE_NODE);
@@ -194,7 +207,9 @@ public class ALiPage extends Page{
 		if(containerNode==null)
 		{
 			LOG.info("the container node is null");
-			containerNode=this.pageNode;
+//			containerNode=this.pageNode;
+			this.color="";
+			return;
 		}
 		//
 		Key nodeKey=configuration.getKey(COLOR_NODE);
@@ -230,7 +245,55 @@ public class ALiPage extends Page{
 	@Override
 	public void generateImages() {
 		// TODO Auto-generated method stub
-		
+		Key containerKey=configuration.getKey(IMAGES_CONTAINER);
+		Element containerNode=getElement(this.pageNode,containerKey);
+		if(containerNode==null)
+		{
+			containerNode=this.pageNode;
+		}
+		//
+		Key nodeKey=configuration.getKey(IMAGES_NODE);
+		Element node=getElement(containerNode,nodeKey);
+		if(nodeKey==null)
+		{
+			node=this.pageNode;
+		}
+		//
+		Key valueKey=configuration.getKey(IMAGES_VALUE);
+		List<Element> valuesNode=getElements(node,valueKey);
+		//
+		String thumnStr=configuration.getKey(IMAGES_THUMB).getVlaue();
+		String zoomStr=configuration.getKey(IMAGES_ZOOM).getVlaue();
+		for(Element image:valuesNode)
+		{
+			System.out.println(image.outerHtml());
+			String srcUrl=image.attr("src");
+			if(srcUrl.contains(thumnStr))
+			{
+				srcUrl=srcUrl.replaceAll(thumnStr, zoomStr);
+			}
+			//
+			if(srcUrl.startsWith("//"))
+			{
+				srcUrl="http:"+srcUrl;
+			}
+			else if(srcUrl.startsWith("http://"))
+			{
+				srcUrl="http://"+srcUrl;
+			}
+			//
+			if(srcUrl.endsWith(".webp"))
+			{
+				srcUrl=srcUrl.replaceAll(".webp", "");
+			}
+			String name=this.id;
+			if(this.imageCuont>0)
+			{
+				name=name+"_0"+this.imageCuont;
+			}
+			downloadImage(srcUrl, name);
+			this.imageCuont++;
+		}
 	}
 	
 	private void generateDescription() {
@@ -325,9 +388,9 @@ public class ALiPage extends Page{
 		generatePrice();
 		generateColor();
 		generateDate();
-//		generateImages();
+		generateImages();
 		generateSize();
-		generateDescription();
+//		generateDescription();
 		
 	}
 	

@@ -2,6 +2,7 @@ package com.wozipa.reptile.app.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 
 import com.wozipa.reptile.app.ApplicationWindows;
 import com.wozipa.reptile.app.tab.JobListTabbar;
@@ -27,12 +28,15 @@ public class JobListAction extends Action{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		ApplicationWindows windows=ApplicationWindows.GetApp();
+		CTabFolder parent=windows.getContent();
 		if(tabbar==null)
 		{
-			ApplicationWindows windows=ApplicationWindows.GetApp();
-			tabbar=new JobListTabbar(windows.getContent(), SWT.NONE);
+			
+			tabbar=new JobListTabbar(parent, SWT.NONE);
 			tabbar.createContent();
 		}
+		parent.setSelection(tabbar);
 	}
 
 }

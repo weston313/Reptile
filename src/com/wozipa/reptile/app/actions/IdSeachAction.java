@@ -2,6 +2,8 @@ package com.wozipa.reptile.app.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+
 import com.wozipa.reptile.app.ApplicationWindows;
 import com.wozipa.reptile.app.tab.IdSearchTabbar;
 
@@ -21,8 +23,10 @@ public class IdSeachAction extends Action{
 	public void run() {
 		// TODO Auto-generated method stub
 		ApplicationWindows windows=ApplicationWindows.GetApp();
-		IdSearchTabbar tabbar=new IdSearchTabbar(windows.getContent(),SWT.NONE);
+		CTabFolder parent=windows.getContent();
+		IdSearchTabbar tabbar=new IdSearchTabbar(parent,SWT.NONE);
 		tabbar.createContent();
+		parent.setSelection(tabbar);
 	}
 
 }

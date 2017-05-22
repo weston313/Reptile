@@ -83,6 +83,7 @@ private static final Log LOG=LogFactory.getLog(ItemPageTabbar.class);
 		this.id=UUID.randomUUID().toString();
 		configuration=AppConfiguration.getConfiguration();
 		//
+		//parent.setSelection(this);
 	}
 	
 	/**

@@ -143,8 +143,6 @@ public class ConfigTabbar extends CTabItem{
 				configuration.addKey(AppConfiguration.COOKIE_PASSWORD,new Key(password, ""));
 			}
 		});
-		
-		
 	}
 	
 	
