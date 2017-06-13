@@ -22,7 +22,7 @@ public class TaskInfo {
 	
 	public enum STATE{
 		
-		RUNNING("运行中"),KILLED("终止"),END("完成");
+		INIT("初始化中"),RUNNING("运行中"),KILLED("终止"),END("完成");
 		
 		private String value;
 		private STATE(String _value)

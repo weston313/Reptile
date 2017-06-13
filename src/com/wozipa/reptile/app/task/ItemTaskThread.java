@@ -51,7 +51,6 @@ public class ItemTaskThread extends Thread{
 		this.pagesUrl=pagesUrl;
 		this.resultPath=resultPath;
 		this.encrypt=encrypt;
-		
 		init();
 	}
 	
@@ -67,6 +66,7 @@ public class ItemTaskThread extends Thread{
 		//
 		taskInfo=new TaskInfo();
 		this.container=TaskContainer.getInstance();
+		createTaskInfoAndSave();
 	}
 	
 	public WritableSheet initlizeHeader(WritableWorkbook workbook)
@@ -119,7 +119,7 @@ public class ItemTaskThread extends Thread{
 	public void run() {
 		// TODO Auto-generated method stub
 		//start to run the thread
-		createTaskInfoAndSave();
+//		createTaskInfoAndSave();
 		String filePath=this.resultPath+"/"+"结果.xls";
 		WritableWorkbook workbook=null;
 		try {
@@ -136,7 +136,7 @@ public class ItemTaskThread extends Thread{
 		for(int i=0;i<this.pagesUrl.length;i++)
 		{
 			String pageUrl=pagesUrl[i];
-			LOG.info(this.type);
+			LOG.info("start to reptile the page "+pageUrl);
 			Page page=PageFactory.GetPage(this.type);
 			page.setTask(pageUrl, this.resultPath,encrypt);
 			page.startGenerate();

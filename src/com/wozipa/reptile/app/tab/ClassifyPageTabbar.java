@@ -49,7 +49,7 @@ private static final Log LOG=LogFactory.getLog(ItemPageTabbar.class);
 	private static final String SEPARETOR=";";
 	private static final String SEPARETOR_REGEX="[,;\r\n]{1,}";
 	
-	private static final String[] ID_ENCODE={"无加密","倒转加密","前缀加密","随机加密","MD5加密","SHA加密"};
+	private static final String[] ID_ENCODE={"无加密","倒转加密","前缀加密"};
 	
 	private CTabFolder parent;
 	private Composite composite;
@@ -148,8 +148,10 @@ private static final Log LOG=LogFactory.getLog(ItemPageTabbar.class);
 					while(reader.ready())
 					{
 						String line=reader.readLine();
-						sb.append(line).append(SEPARETOR);
+						sb.append(line).append("\r\n");
 					}
+					reader.close();
+					pagesText.setText(sb.toString());
 				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

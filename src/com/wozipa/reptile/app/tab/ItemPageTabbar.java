@@ -143,8 +143,10 @@ public class ItemPageTabbar extends CTabItem{
 					while(reader.ready())
 					{
 						String line=reader.readLine();
-						sb.append(line).append(SEPARETOR);
+						sb.append(line).append("\r\n");
 					}
+					reader.close();
+					pagesText.setText(sb.toString());
 				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -264,11 +266,12 @@ public class ItemPageTabbar extends CTabItem{
 				return;
 			}
 			Set<String> set=new HashSet<>();
-			String[] pagesUrl=pages.split(SEPARETOR);
+			String[] pagesUrl=pages.split(SEPARETOR_REGEX);
 			for(String pageUrl:pagesUrl)
 			{
 				set.add(pageUrl);
 			}
+			System.out.println(set.size());
 			//
 			String resultPath=resultPathText.getText();
 			//
