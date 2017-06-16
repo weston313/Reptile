@@ -22,6 +22,7 @@ public class AppConfiguration {
 	public static final String RESULT_PATH="reptile.result.path";
 	public static final String COOKIE_USERNAME="reptile.cookie.username";
 	public static final String COOKIE_PASSWORD="reptile.cookie.password";
+	public static final String PROXY_STATE="reptile.proxy.state";
 	
 	private volatile static AppConfiguration configuration=null;
 	

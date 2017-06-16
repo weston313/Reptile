@@ -10,7 +10,7 @@ public class DBConnectionTest {
 
 	@Test
 	public void test() {
-		DBConnection connection=new DBConnection();
+		DBConnection connection=DBConnection.GetDataBase();
 		if(!connection.tableExist())
 		{
 			connection.createTable();

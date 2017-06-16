@@ -1,10 +1,10 @@
 package com.wozipa.reptile.app.tab;
 
+import org.apache.commons.collections.functors.IfClosure;
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -12,16 +12,18 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import com.wozipa.reptile.app.config.AppConfiguration;
 import com.wozipa.reptile.app.config.Key;
 
 public class ConfigTabbar extends CTabItem{
+	
+	private static final Logger LOGGER=Logger.getLogger(ConfigTabbar.class);
+	private static final String[] PROXY_COMBO={"关闭","打开"};
 	
 	private CTabFolder parent;
 	private int style;
@@ -30,6 +32,7 @@ public class ConfigTabbar extends CTabItem{
 	private Text resultText=null;
 	private Text usernameText=null;
 	private Text passwordText=null;
+	private Combo proxyCombo=null;
 
 	public ConfigTabbar(CTabFolder parent, int style) {
 		super(parent, style);
@@ -51,6 +54,7 @@ public class ConfigTabbar extends CTabItem{
 	{
 		createResultArea();
 		createCookieArea();
+		createProxyArea();
 		createSaveArea();
 	}
 	
@@ -118,11 +122,21 @@ public class ConfigTabbar extends CTabItem{
 				String path=resultText.getText();
 				String username=usernameText.getText();
 				String password=passwordText.getText();
+				
 				//
 				AppConfiguration configuration=AppConfiguration.getConfiguration();
 				configuration.addKey(AppConfiguration.RESULT_PATH,new Key(path, ""));
 				configuration.addKey(AppConfiguration.COOKIE_USERNAME,new Key(username, ""));
 				configuration.addKey(AppConfiguration.COOKIE_PASSWORD,new Key(password, ""));
+				String proxy=proxyCombo.getText();
+				if(proxy.equals(PROXY_COMBO[0]))
+				{
+					configuration.addKey(AppConfiguration.PROXY_STATE,new Key("0",""));
+				}
+				else
+				{
+					configuration.addKey(AppConfiguration.PROXY_STATE, new Key("1",""));	
+				}
 			}
 		});
 		
@@ -145,5 +159,22 @@ public class ConfigTabbar extends CTabItem{
 		});
 	}
 	
-	
+	/**
+	 * @author wozipa
+	 * @date 2017-6-14
+	 * @see create the proxy area to let user chose open the proxy or not
+	 */
+	public void createProxyArea()
+	{
+		Text text=new Text(composite, style);
+		text.setText("IP代理");
+		text.setBackground(new Color(null, new RGB(255, 255, 255)));
+		text.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,false,false,1,1));
+		//
+		proxyCombo=new Combo(composite, SWT.DROP_DOWN |SWT.READ_ONLY);
+		proxyCombo.setItems(PROXY_COMBO);
+		proxyCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,2,1));
+		Key proxyKey=AppConfiguration.getConfiguration().getKey(AppConfiguration.PROXY_STATE);
+		proxyCombo.select(Integer.parseInt(proxyKey.getVlaue()));
+	}
 }

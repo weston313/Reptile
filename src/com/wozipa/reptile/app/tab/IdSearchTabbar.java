@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -19,12 +21,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
+import com.gargoylesoftware.htmlunit.javascript.host.file.File;
+import com.wozipa.reptile.app.ApplicationWindows;
 import com.wozipa.reptile.data.db.DBConnection;
 import com.wozipa.reptile.data.db.IdDBData;
 
@@ -99,7 +105,7 @@ public class IdSearchTabbar extends CTabItem{
 //				}
 				System.out.println(id);
 				table.removeAll();
-				DBConnection connection=new DBConnection();
+				DBConnection connection=DBConnection.GetDataBase();
 				List<IdDBData> datas=connection.search(id);
 				System.out.println(datas.size());
 				for(IdDBData data:datas)
@@ -151,11 +157,39 @@ public class IdSearchTabbar extends CTabItem{
 			public void mouseDoubleClick(MouseEvent e) {
 				// TODO Auto-generated method stub
 				Table table=(Table) e.getSource();
+				if(table.getSelectionCount()==0){
+					return;
+				}
 				TableItem item=table.getSelection()[0];
 				String resultPath=item.getText(2);
 				System.out.println(item.getText(2));
 				try {
-					runtime.exec("explorer "+resultPath);
+					if(new java.io.File(resultPath).exists())
+					{
+						runtime.exec("explorer "+resultPath);
+					}
+					else
+					{
+						boolean isChange=MessageDialog.openQuestion(ApplicationWindows.GetApp().getShell(), "提示", "文件被删除或者被移动，是否进行修改，如果不修改，该条记录将被删除");
+						if(isChange)
+						{
+							DirectoryDialog dialog=new DirectoryDialog(ApplicationWindows.GetApp().getShell());
+							String result=dialog.open();
+							if(result==null || result.isEmpty())
+							{
+								return;
+							}
+							DBConnection connection=DBConnection.GetDataBase();
+							connection.changeResultPath(item.getText(0),item.getText(1),item.getText(2),result);
+							connection.close();
+						}
+						else
+						{
+							DBConnection connection=DBConnection.GetDataBase();
+							connection.delete(item.getText(0), item.getText(1), item.getText(2));
+							connection.close();
+						}
+					}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -197,7 +231,7 @@ public class IdSearchTabbar extends CTabItem{
 //					output.setText(connectin.getGoodId(id));
 //				}
 				table.removeAll();
-				DBConnection connection=new DBConnection();
+				DBConnection connection=DBConnection.GetDataBase();
 				List<IdDBData> datas=connection.search(id);
 				for(IdDBData data:datas)
 				{

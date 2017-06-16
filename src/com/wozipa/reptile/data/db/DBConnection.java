@@ -7,6 +7,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;
+
+import com.gargoylesoftware.htmlunit.javascript.host.Set;
+import com.ibm.icu.util.BytesTrie.Result;
 import com.wozipa.reptile.data.Connectin;
 import com.wozipa.reptile.data.Data;
 import com.wozipa.reptile.derby.DerbyDB;
@@ -16,15 +19,33 @@ public class DBConnection extends Connectin<IdDBData>{
 	private static final Logger LOGGER=Logger.getLogger(DBConnection.class);
 	
 	private static final String TABLE_NAME="ids";
+	private static final String COLUMN_ID="id";
 	private static final String COLUMN_ENID="enId";
 	private static final String COLUMN_OGID="ogId";
+	private static final String COLUMN_TASK="task";
 	private static final String COLUMN_RESULT="result";
+	
+	private static volatile DBConnection DATABASE=null;
+	
+	public static DBConnection GetDataBase()
+	{
+		if(DATABASE==null)
+		{
+			synchronized (DBConnection.class) {
+				if(DATABASE==null)
+				{
+					DATABASE=new DBConnection();
+				}
+			}
+		}
+		return DATABASE;
+	}
 	
 	private Connection connection=null;
 	private Statement statement=null;
 	
 
-	public DBConnection() {
+	private DBConnection() {
 		// TODO Auto-generated constructor stub
 		try {
 			DerbyDB derbyDB=DerbyDB.GetDataBase();
@@ -113,6 +134,56 @@ public class DBConnection extends Connectin<IdDBData>{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * @author wozipa
+	 * @date 2017-6-15 
+	 * @see delete from where
+	 * @param enId
+	 * @param ogId
+	 * @param resultPath
+	 */
+	public void delete(String enId,String ogId,String resultPath)
+	{
+		StringBuffer delSB=new StringBuffer();
+		delSB.append("delete from ").append(TABLE_NAME).append("where ")
+			.append(COLUMN_ENID).append("='").append(enId).append("' and ")
+			.append(COLUMN_OGID).append("='").append(ogId).append("' and")
+			.append(COLUMN_RESULT).append("='").append(resultPath).append("'");
+		System.out.println(delSB.toString());
+		try {
+			statement.execute(delSB.toString());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * @author wozipa
+	 * @date 2017-6-15
+	 * @see change the result path of the path 
+	 * @param enId
+	 * @param ogId
+	 * @param old
+	 * @param newPath
+	 */
+	public void changeResultPath(String enId,String ogId,String old,String newPath)
+	{
+		StringBuffer sb=new StringBuffer();
+		sb.append("update table ").append(TABLE_NAME).append(" set ").append(COLUMN_RESULT).append("='").append(newPath).append("'")
+				.append(" where ").append(COLUMN_ENID).append("='").append(enId).append("' and ")
+				.append(COLUMN_OGID).append("='").append(ogId).append("' and")
+				.append(COLUMN_RESULT).append("='").append(old).append("'");
+		System.out.println(sb.toString());
+		try {
+			statement.execute(sb.toString());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }

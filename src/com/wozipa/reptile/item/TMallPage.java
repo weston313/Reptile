@@ -160,7 +160,7 @@ public class TMallPage extends Page{
 //		ConnManager connManager=ConnManager.getInstance();
 //		Connectin connectin=connManager.getConnection(IdFileData.class);
 //		connectin.write(new IdFileData(this.id,idValue));
-		DBConnection connection=new DBConnection();
+		DBConnection connection=DBConnection.GetDataBase();
 		connection.write(new IdDBData(this.id,idValue,resultPath));
 		connection.close();
 	}
@@ -387,8 +387,7 @@ public class TMallPage extends Page{
 		generateImages();
 		generatePrice();
 		generateSize();
-//		generateDescription();
-
+		generateDescription();
 	}
 
 	@Override
