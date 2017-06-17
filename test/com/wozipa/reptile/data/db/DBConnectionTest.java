@@ -15,7 +15,7 @@ public class DBConnectionTest {
 		{
 			connection.createTable();
 		}
-		IdDBData data=new IdDBData("testEn","testOg","E:\\Test");
+		IdDBData data=new IdDBData("testTask","testEn","testOg","E:\\Test");
 //		connection.write(data);
 		List<IdDBData> datas=connection.search("test");
 		for(IdDBData d:datas)

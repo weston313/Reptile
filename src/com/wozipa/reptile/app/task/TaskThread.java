@@ -120,7 +120,7 @@ public class TaskThread extends Thread{
 			String pageUrl=pagesUrl[i];
 			PAGETYPE type=getPageType(pageUrl);
 			LOG.info(this.type);
-			Page page=PageFactory.GetPage(this.type);
+			Page page=PageFactory.GetPage(this.type,this.id);
 			page.setTask(pageUrl, this.resultPath,encrypt);
 			page.startGenerate();
 			writeResult(sheet,i, page);

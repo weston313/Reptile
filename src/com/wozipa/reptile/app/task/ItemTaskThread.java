@@ -137,7 +137,7 @@ public class ItemTaskThread extends Thread{
 		{
 			String pageUrl=pagesUrl[i];
 			LOG.info("start to reptile the page "+pageUrl);
-			Page page=PageFactory.GetPage(this.type);
+			Page page=PageFactory.GetPage(this.type,this.id);
 			page.setTask(pageUrl, this.resultPath,encrypt);
 			page.startGenerate();
 			writeResult(sheet,i, page);

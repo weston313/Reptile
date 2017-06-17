@@ -86,11 +86,13 @@ public class ALiPage extends Page{
 	private int imageCuont=0;
 	private String resultPath;
 	private int encrypt;
+	private String taskId;
 	
-	public ALiPage() {
+	public ALiPage(String taskId) {
 		// TODO Auto-generated constructor stub
 		configuration=PageConfiguration.getInstance();
 		platform="阿里巴巴";
+		this.taskId=taskId;
 	}
 	
 	/**
@@ -155,8 +157,8 @@ public class ALiPage extends Page{
 //		Connectin connectin=connManager.getConnection(IdFileData.class);
 //		connectin.write(new IdFileData(this.id,idValue));
 		DBConnection connection=DBConnection.GetDataBase();
-		connection.write(new IdDBData(this.id,idValue,resultPath));
-		connection.close();
+		connection.write(new IdDBData(this.taskId,this.id,idValue,resultPath));
+//		connection.close();
 	}
 
 	@Override

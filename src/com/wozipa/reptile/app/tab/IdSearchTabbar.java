@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.entity.mime.Header;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
@@ -38,7 +39,8 @@ public class IdSearchTabbar extends CTabItem{
 	
 	private static final Log LOG=LogFactory.getLog(IdSearchTabbar.class);
 	
-	private static final String[] HEADERS={"加密ID","真实ID","结果位置"};
+	private static final String[] HEADERS={"序列号","任务ID","加密ID","真实ID","结果位置"};
+	private static final int[] COLUMN_WIDTH={1,1,1,1,2};
 	
 	private CTabFolder parent;
 	private int style;
@@ -111,9 +113,9 @@ public class IdSearchTabbar extends CTabItem{
 				for(IdDBData data:datas)
 				{
 					TableItem item=new TableItem(table, style);
-					item.setText(new String[]{data.getEnId(),data.getOgId(),data.getResult()});
+					item.setText(new String[]{data.getId(),data.getTask(),data.getEnId(),data.getOgId(),data.getResult()});
 				}
-				connection.close();
+//				connection.close();
 			}
 		});
 	}
@@ -146,7 +148,7 @@ public class IdSearchTabbar extends CTabItem{
 				 TableColumn[] columns = table.getColumns();
                  int clientWidth = table.getBounds().width;
                 for(int i=0;i<columns.length;i++){
-                    columns[i].setWidth((clientWidth)/columns.length);
+                    columns[i].setWidth((clientWidth*COLUMN_WIDTH[i])/6);
                 }
                 //
 			}
@@ -161,8 +163,8 @@ public class IdSearchTabbar extends CTabItem{
 					return;
 				}
 				TableItem item=table.getSelection()[0];
-				String resultPath=item.getText(2);
-				System.out.println(item.getText(2));
+				String resultPath=item.getText(HEADERS.length-1);
+				System.out.println(item.getText(HEADERS.length-1));
 				try {
 					if(new java.io.File(resultPath).exists())
 					{
@@ -181,13 +183,13 @@ public class IdSearchTabbar extends CTabItem{
 							}
 							DBConnection connection=DBConnection.GetDataBase();
 							connection.changeResultPath(item.getText(0),item.getText(1),item.getText(2),result);
-							connection.close();
+//							connection.close();
 						}
 						else
 						{
 							DBConnection connection=DBConnection.GetDataBase();
 							connection.delete(item.getText(0), item.getText(1), item.getText(2));
-							connection.close();
+//							connection.close();
 						}
 					}
 				} catch (IOException e1) {
@@ -238,7 +240,7 @@ public class IdSearchTabbar extends CTabItem{
 					TableItem item=new TableItem(table, style);
 					item.setText(new String[]{data.getEnId(),data.getOgId(),data.getResult()});
 				}
-				connection.close();
+//				connection.close();
 			}
 		});
 	}

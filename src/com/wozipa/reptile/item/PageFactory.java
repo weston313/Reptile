@@ -11,18 +11,18 @@ public class PageFactory {
 	public static final String TAOBAO="taobao";
 	public static final String ALIBABA="alibb";
 	
-	public static Page GetPage(String type)
+	public static Page GetPage(String type,String taskId)
 	{
 		Page page=null;
 		switch (type) {
 		case TMALL:
-			page=new TMallPage();
+			page=new TMallPage(taskId);
 			break;
 		case TAOBAO:
-			page=new TaoaBaoPage();
+			page=new TaoaBaoPage(taskId);
 			break;
 		case ALIBABA:
-			page=new ALiPage();
+			page=new ALiPage(taskId);
 			break;
 		}
 		return page;

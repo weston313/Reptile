@@ -1,5 +1,7 @@
 package com.wozipa.reptile.app;
 
+import java.awt.dnd.DnDConstants;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.MenuManager;
@@ -48,6 +50,7 @@ import com.wozipa.reptile.app.tab.ItemPageTabbar;
 import com.wozipa.reptile.app.tab.JobListTabbar;
 import com.wozipa.reptile.cookie.CookieManagerCache;
 import com.wozipa.reptile.data.ConnManager;
+import com.wozipa.reptile.data.db.DBConnection;
 import com.wozipa.reptile.data.file.IdFileData;
 
 public class ApplicationWindows extends ApplicationWindow{
@@ -98,6 +101,8 @@ public class ApplicationWindows extends ApplicationWindow{
 			ConfigDialog dialog=new ConfigDialog(this.getShell());
 			dialog.open();
 		}
+		//
+		DBConnection.GetDataBase();
 	}
 	
 	/**

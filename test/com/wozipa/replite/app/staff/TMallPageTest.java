@@ -12,7 +12,7 @@ public class TMallPageTest {
 	public void test() {
 		String pageUrl="";
 		String resultPath="";
-		TMallPage page=new TMallPage();
+		TMallPage page=new TMallPage("");
 	}
 
 }

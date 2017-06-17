@@ -69,6 +69,8 @@ public class DBConnection extends Connectin<IdDBData>{
 			IdDBData dbData=(IdDBData) data;
 			StringBuilder sb=new StringBuilder();
 			sb.append("insert into ").append(TABLE_NAME).append(" values('")
+				.append(dbData.getId()).append("','")
+				.append(dbData.getTask()).append("','")
 				.append(dbData.getEnId()).append("','")
 				.append(dbData.getOgId()).append("','")
 				.append(dbData.getResult()).append("')");
@@ -87,10 +89,17 @@ public class DBConnection extends Connectin<IdDBData>{
 	
 	public void createTable()
 	{
-		String createSql="create table ids(enId varchar(20),ogId varchar(20),result varchar(100))";
-		System.out.println(createSql);
+//		String createSql="create table ids(enId varchar(20),ogId varchar(20),result varchar(100))";
+		StringBuffer sb=new StringBuffer();
+		sb.append("create table ").append(TABLE_NAME).append("(")
+				.append(COLUMN_ID).append(" varchar(20),")
+				.append(COLUMN_TASK).append(" varchar(100),")
+				.append(COLUMN_ENID).append(" varchar(100),")
+				.append(COLUMN_OGID).append(" varchar(20),")
+				.append(COLUMN_RESULT).append(" varchar(200))");
+		System.out.println(sb.toString());
 		try {
-			statement.execute(createSql);
+			statement.execute(sb.toString());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -115,7 +124,7 @@ public class DBConnection extends Connectin<IdDBData>{
 			ResultSet resultSet=statement.executeQuery(stringBuffer.toString());
 			while(resultSet.next())
 			{
-				IdDBData data=new IdDBData(resultSet.getString(COLUMN_ENID),resultSet.getString(COLUMN_OGID),resultSet.getString(COLUMN_RESULT));
+				IdDBData data=new IdDBData(resultSet.getString(COLUMN_ID),resultSet.getString(COLUMN_TASK),resultSet.getString(COLUMN_ENID),resultSet.getString(COLUMN_OGID),resultSet.getString(COLUMN_RESULT));
 				datas.add(data);
 			}
 		} catch (SQLException e) {

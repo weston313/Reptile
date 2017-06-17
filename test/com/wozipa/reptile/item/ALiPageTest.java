@@ -16,7 +16,7 @@ public class ALiPageTest {
 
 	@Test
 	public void test() {
-		ALiPage page=new ALiPage();
+		ALiPage page=new ALiPage("null");
 		String pageUrl="https://detail.1688.com/offer/535876137683.html?position=top";
 		String resultPath="E:\\Test\\Replite\\Result";
 		page.setTask(pageUrl,resultPath, 0);

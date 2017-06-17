@@ -103,11 +103,13 @@ public class TMallPage extends Page{
 	private int imageCount=0;
 	private String resultPath;
 	private int encrypt;
+	private String taskId;
 	
 	
-	public TMallPage() {
+	public TMallPage(String task) {
 		// TODO Auto-generated constructor stub
 		configuration=PageConfiguration.getInstance();
+		this.taskId=task;
 	}
 	
 	@Override
@@ -161,8 +163,8 @@ public class TMallPage extends Page{
 //		Connectin connectin=connManager.getConnection(IdFileData.class);
 //		connectin.write(new IdFileData(this.id,idValue));
 		DBConnection connection=DBConnection.GetDataBase();
-		connection.write(new IdDBData(this.id,idValue,resultPath));
-		connection.close();
+		connection.write(new IdDBData(this.taskId,this.id,idValue,resultPath));
+//		connection.close();
 	}
 
 	@Override

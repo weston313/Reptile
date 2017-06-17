@@ -91,13 +91,14 @@ public class TaoaBaoPage extends Page{
 	private String resultPath;
 	
 	private int idEncrypt;
-	
+	private String taskId;
 	private int imageCount=0;
 	
-	public TaoaBaoPage()
+	public TaoaBaoPage(String taskId)
 	{
 		LOG.info("initlize the taobao page");
 		configuration=PageConfiguration.getInstance();
+		this.taskId=taskId;
 	}
 	
 	public void setTask(String pageUrl, String resultPath,int encrypt) 
@@ -163,8 +164,8 @@ public class TaoaBaoPage extends Page{
 //		Connectin connectin=connManager.getConnection(IdFileData.class);
 //		connectin.write(new IdFileData(this.id,idValue));
 		DBConnection connection=DBConnection.GetDataBase();
-		connection.write(new IdDBData(this.id,idValue,resultPath));
-		connection.close();
+		connection.write(new IdDBData(this.taskId,this.id,idValue,resultPath));
+//		connection.close();
 	}
 
 	@Override
